@@ -14,7 +14,7 @@ const NavBar: React.FC = () => {
     { id: 'home', label: 'Home', icon: <Code size={20} /> },
     { id: 'about', label: 'About', icon: <User size={20} /> },
     { id: 'skills', label: 'Skills', icon: <Cpu size={20} /> },
-    { id: 'experience', label: 'Experience', icon: <Clock size={20} /> },
+    // { id: 'experience', label: 'Experience', icon: <Clock size={20} /> },
     { id: 'projects', label: 'Projects', icon: <Rocket size={20} /> },
     { id: 'contact', label: 'Contact', icon: <Send size={20} /> },
   ];
