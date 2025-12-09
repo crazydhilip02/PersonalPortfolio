@@ -6,14 +6,16 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "deploy": "npm run build && firebase deploy"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@react-three/drei": "^9.88.0",
     "@react-three/fiber": "^8.15.12",
     "emailjs-com": "^3.2.0",
+    "firebase": "^12.6.0",
     "framer-motion": "^10.18.0",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",

@@ -4,9 +4,11 @@ import { motion } from 'framer-motion';
 import { Mail, MapPin, Smartphone, Send } from 'lucide-react';
 import GlitchText from '../effects/GlitchText';
 import TerminalText from '../effects/TerminalText';
+import { useContent } from '../../context/ContentContext';
 
 
 const Contact: React.FC = () => {
+  const { contact } = useContent();
   const formRef = useRef<HTMLFormElement>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -100,44 +102,40 @@ const Contact: React.FC = () => {
 
               <div className="space-y-6">
                 <div>
-                  <a href='https://maps.app.goo.gl/8GnWayEjrpwLnLVUA'>
+                  <a href={contact.mapLink} target="_blank" rel="noopener noreferrer">
                     <div className="flex items-start gap-4">
                       <div className="p-3 bg-black/50 rounded-lg border border-gray-800">
                         <MapPin className="text-cyan-400" size={20} />
                       </div>
                       <div>
                         <h5 className="text-gray-200 font-bold">Location</h5>
-                        <p className="text-gray-400">Avadi,chennai</p>
+                        <p className="text-gray-400">{contact.location}</p>
                       </div>
                     </div>
                   </a>
                 </div>
                 <div>
-                  <a href='mailto:dhilip637410@gmail.com'
-                    target="_blank"
-                  >
+                  <a href={`mailto:${contact.email}`} target="_blank" rel="noopener noreferrer">
                     <div className="flex items-start gap-4">
                       <div className="p-3 bg-black/50 rounded-lg border border-gray-800">
                         <Mail className="text-cyan-400" size={20} />
                       </div>
                       <div >
                         <h5 className="text-gray-200 font-bold">Email</h5>
-                        <p className="text-gray-400">dhilip637410@gmail.com</p>
+                        <p className="text-gray-400">{contact.email}</p>
                       </div>
                     </div>
                   </a>
                 </div>
                 <div>
-                  <a
-                    href="https://wa.me/6374106956"
-                    target="_blank"
-                  ><div className="flex items-start gap-4">
+                  <a href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener noreferrer">
+                    <div className="flex items-start gap-4">
                       <div className="p-3 bg-black/50 rounded-lg border border-gray-800">
                         <Smartphone className="text-cyan-400" size={20} />
                       </div>
                       <div>
                         <h5 className="text-gray-200 font-bold">WhatsApp</h5>
-                        <p className="text-gray-400"> 6374106956</p>
+                        <p className="text-gray-400"> {contact.whatsapp}</p>
                       </div>
                     </div>
                   </a>

@@ -1,0 +1,77 @@
+// THREE-BUTTON IMAGE UPLOAD UI
+// Replace the image upload section in ProjectsManager form
+
+<div className="space-y-3">
+    <label className="block text-xs text-gray-500">Project Thumbnail</label>
+    
+    {/* Image Preview */}
+    {newProject.image && (
+        <div className="border-2 border-green-500/30 rounded-lg overflow-hidden">
+            <img src={newProject.image} className="w-full h-40 object-cover" alt="Preview" />
+            <div className="bg-green-900/20 p-2 flex justify-between items-center">
+                <p className="text-xs text-green-400">✓ Image Ready</p>
+                <button
+                    type="button"
+                    onClick={() => setNewProject({...newProject, image: ''})}
+                    className="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded text-xs transition-colors"
+                >
+                    ✕ Remove
+                </button>
+            </div>
+        </div>
+    )}
+
+    {/* Three Upload Buttons */}
+    {!newProject.image && (
+        <div className="grid grid-cols-3 gap-2">
+            {/* Button 1: Upload Local File */}
+            <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-700 hover:border-cyan-500 rounded-lg p-4 cursor-pointer transition-colors group">
+                <Upload className={`mb-2 ${uploading ? 'animate-bounce text-cyan-400' : 'text-gray-500 group-hover:text-cyan-400'}`} size={24} />
+                <span className="text-xs text-gray-500 group-hover:text-cyan-400 text-center">
+                    {uploading ? 'Uploading...' : 'Upload Local'}
+                </span>
+                <input 
+                    type="file" 
+                    className="hidden" 
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                />
+            </label>
+
+            {/* Button 2: Paste Image URL */}
+            <button
+                type="button"
+                onClick={handlePasteImageURL}
+                className="flex flex-col items-center justify-center border-2 border-dashed border-gray-700 hover:border-purple-500 rounded-lg p-4 transition-colors group"
+            >
+                <ImageIcon className="mb-2 text-gray-500 group-hover:text-purple-400" size={24} />
+                <span className="text-xs text-gray-500 group-hover:text-purple-400 text-center">
+                    Paste URL
+                </span>
+            </button>
+
+            {/* Button 3: Capture from Live URL */}
+            <button
+                type="button"
+                onClick={handleCaptureFromLiveURL}
+                disabled={generatingThumbnail || !newProject.link}
+                className="flex flex-col items-center justify-center border-2 border-dashed border-gray-700 hover:border-orange-500 disabled:border-gray-800 disabled:cursor-not-allowed rounded-lg p-4 transition-colors group"
+            >
+                <Camera className={`mb-2 ${generatingThumbnail ? 'animate-pulse text-orange-400' : 'text-gray-500 group-hover:text-orange-400'}`} size={24} />
+                <span className="text-xs text-gray-500 group-hover:text-orange-400 text-center">
+                    {generatingThumbnail ? 'Capturing...' : 'Capture Live'}
+                </span>
+            </button>
+        </div>
+    )}
+
+    {/* Helper Text */}
+    <p className="text-xs text-gray-600">
+        <span className="text-cyan-400">Upload Local:</span> Choose from computer (JPG, PNG, WEBP, max 5MB)
+        <br />
+        <span className="text-purple-400">Paste URL:</span> Enter direct image link
+        <br />
+        <span className="text-orange-400">Capture Live:</span> Screenshot from Live Demo URL
+    </p>
+</div>

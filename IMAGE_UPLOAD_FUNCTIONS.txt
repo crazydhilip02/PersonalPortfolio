@@ -1,0 +1,94 @@
+// IMAGE UPLOAD HELPER FUNCTIONS
+// Place these in ProjectsManager.tsx
+
+// 1. CAPTURE SCREENSHOT FROM LIVE URL
+const handleCaptureFromLiveURL = async () => {
+    const url = newProject.link;
+    
+    if (!url) {
+        alert('⚠️ Please enter Live Demo URL first');
+        return;
+    }
+
+    setGeneratingThumbnail(true);
+    try {
+        const encodedUrl = encodeURIComponent(url);
+        const timestamp = Date.now();
+        const screenshotUrl = `https://api.screenshotmachine.com?key=demo&url=${encodedUrl}&dimension=1200x800&device=desktop&format=jpg&cacheLimit=0&delay=2000&timestamp=${timestamp}`;
+        
+        console.log('📸 Capturing screenshot from:', url);
+        setNewProject({ ...newProject, image: screenshotUrl });
+        alert('✓ Screenshot captured from live URL!');
+    } catch (err) {
+        console.error('Screenshot failed:', err);
+        alert('❌ Failed to capture screenshot. Try pasting image URL instead.');
+    } finally {
+        setGeneratingThumbnail(false);
+    }
+};
+
+// 2. UPLOAD LOCAL FILE (FIXED)
+const handleFileUpload = async (file: File): Promise<string> => {
+    console.log('=== UPLOADING FILE ===');
+    console.log('Name:', file.name);
+    console.log('Size:', (file.size / 1024 / 1024).toFixed(2), 'MB');
+    console.log('Type:', file.type);
+
+    // Validate file size
+    if (file.size > 5 * 1024 * 1024) {
+        throw new Error('File must be less than 5MB');
+    }
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        throw new Error('File must be an image (JPG, PNG, WEBP)');
+    }
+
+    try {
+        const timestamp = Date.now();
+        const filename = `${timestamp}_${file.name}`;
+        const storageRef = ref(storage, `projects/${filename}`);
+        
+        console.log('Storage path:', `projects/${filename}`);
+        console.log('Uploading...');
+        
+        await uploadBytes(storageRef, file);
+        console.log('✓ Upload complete');
+        
+        const downloadURL = await getDownloadURL(storageRef);
+        console.log('✓ URL obtained:', downloadURL);
+        
+        return downloadURL;
+    } catch (error: any) {
+        console.error('=== UPLOAD ERROR ===');
+        console.error('Code:', error.code);
+        console.error('Message:', error.message);
+        throw error;
+    }
+};
+
+const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+        const url = await handleFileUpload(file);
+        setNewProject({ ...newProject, image: url });
+        alert('✓ Image uploaded successfully!');
+    } catch (error: any) {
+        console.error('Upload error:', error);
+        alert(`❌ Upload failed: ${error.message}\n\nTip: If CORS error, use "Paste Image URL" button instead.`);
+    } finally {
+        setUploading(false);
+    }
+};
+
+// 3. PASTE IMAGE URL
+const handlePasteImageURL = () => {
+    const url = prompt('Paste image URL:');
+    if (url) {
+        setNewProject({ ...newProject, image: url });
+        alert('✓ Image URL set!');
+    }
+};

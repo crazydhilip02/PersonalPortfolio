@@ -1,170 +1,90 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Database, Server, Layout, Code2, cpu } from 'lucide-react';
 import GlitchText from '../effects/GlitchText';
+import { useContent } from '../../context/ContentContext';
 
-const Skills: React.FC = () => {
-  const skillCategories = [
-    {
-      title: "Frontend",
-      skills: [
-        { name: "React", level: 90 },
-        { name: "TypeScript", level: 85 },
-        // { name: "Vue.js", level: 75 },
-        // { name: "Next.js", level: 80 },
-        { name: "Tailwind CSS", level: 90 },
-      ]
-    },
-    {
-      title: "Backend",
-      skills: [
-        { name: "Node.js", level: 85 },
-        { name: "Java", level: 80 },
-        { name: "Express", level: 85 },
-        // { name: "Django", level: 75 },
-        // { name: "GraphQL", level: 70 },
-      ]
-    },
-    {
-      title: "Security",
-      skills: [
-        // { name: "Penetration Testing", level: 80 },
-        // { name: "OAuth/JWT", level: 90 },
-        { name: "Encryption", level: 85 },
-        { name: "Security Audits", level: 75 },
-        { name: "Secure Architecture", level: 85 },
-      ]
-    },
-    // {
-    //   title: "DevOps",
-    //   skills: [
-    //     { name: "Docker", level: 80 },
-    //     { name: "CI/CD", level: 75 },
-    //     { name: "AWS", level: 70 },
-    //     { name: "Kubernetes", level: 65 },
-    //     { name: "Terraform", level: 60 },
-    //   ]
-    // }
-  ];
-
+const SkillCard = ({ category, index }: { category: any, index: number }) => {
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.8 }}
-      className="min-h-screen py-20 flex items-center"
+      transition={{ duration: 0.5, delay: index * 0.2 }}
+      className="group relative bg-gray-900/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-cyan-500/50 transition-colors duration-300"
     >
-      <div className="container mx-auto px-4">
+      {/* Hover Glow */}
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition duration-500"></div>
+
+      <div className="relative h-full flex flex-col">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-3 bg-gray-800 rounded-lg group-hover:bg-cyan-500/20 group-hover:text-cyan-400 transition-colors">
+            {category.title.includes('MERN') ? <Layout size={24} /> :
+              category.title.includes('Java') ? <Server size={24} /> :
+                <Code2 size={24} />}
+          </div>
+          <h3 className="text-xl font-bold text-white">{category.title}</h3>
+        </div>
+
+        <div className="space-y-4 flex-grow">
+          {category.skills.map((skill: any, i: number) => (
+            <div key={i} className="group/skill">
+              <div className="flex justify-between mb-1 text-sm">
+                <span className="text-gray-300 group-hover/skill:text-cyan-300 transition-colors">{skill.name}</span>
+                <span className="text-gray-500 font-mono">{skill.level}%</span>
+              </div>
+              <div className="h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileInView={{ width: `${skill.level}%` }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1, delay: 0.5 + (i * 0.1) }}
+                  className={`h-full rounded-full ${category.title.includes('MERN') ? 'bg-gradient-to-r from-cyan-500 to-blue-500' :
+                      category.title.includes('Java') ? 'bg-gradient-to-r from-orange-500 to-red-500' :
+                        'bg-gradient-to-r from-purple-500 to-pink-500'
+                    }`}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+const Skills: React.FC = () => {
+  const { skills: skillCategories } = useContent();
+
+  return (
+    <section className="min-h-screen py-24 relative flex items-center">
+      {/* Background Dots */}
+      <div className="absolute inset-0 bg-[radial-gradient(#22d3ee_1px,transparent_1px)] [background-size:20px_20px] opacity-[0.05] pointer-events-none" />
+
+      <div className="container mx-auto px-4 z-10">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="mb-16 text-center"
+          className="mb-20 text-center max-w-2xl mx-auto"
         >
-          <h2 className="text-sm uppercase tracking-wider text-purple-400 font-mono mb-2">
-            Technical Arsenal
-          </h2>
-          <h3 className="text-4xl font-bold mb-4">
-            <span className="text-white">Skills &</span>
-            <GlitchText text=" Expertise" className="ml-2 text-cyan-400" />
+          <h2 className="text-cyan-500 font-mono tracking-widest mb-2">CAPABILITIES</h2>
+          <h3 className="text-4xl font-bold mb-4 text-white">
+            Technical <GlitchText text="Arsenal" className="text-purple-400" />
           </h3>
-          <div className="h-1 w-20 bg-gradient-to-r from-cyan-500 to-purple-500 mx-auto"></div>
+          <p className="text-gray-400">
+            A comprehensive suite of technologies driven by performance, scalability, and security.
+          </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {skillCategories.map((category, categoryIndex) => (
-            <motion.div
-              key={category.title}
-              initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: categoryIndex * 0.1 }}
-              className="bg-gray-900/30 backdrop-blur-sm p-6 rounded-lg border border-gray-800"
-            >
-              <h4 className="text-xl font-bold mb-4 text-white flex items-center">
-                <span className="text-purple-400 font-mono mr-2">./</span>
-                {category.title}
-              </h4>
-
-              <div className="space-y-4">
-                {category.skills.map((skill, skillIndex) => (
-                  <motion.div
-                    key={skill.name}
-                    initial={{ x: -20, opacity: 0 }}
-                    whileInView={{ x: 0, opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ 
-                      duration: 0.3, 
-                      delay: (categoryIndex * 0.1) + (skillIndex * 0.1) 
-                    }}
-                  >
-                    <div className="flex justify-between mb-1">
-                      <span className="font-mono text-gray-300">
-                        <span className="text-cyan-400">≫</span> {skill.name}
-                      </span>
-                      <span className="text-gray-400 text-sm">{skill.level}%</span>
-                    </div>
-                    <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${skill.level}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1, delay: 0.5 }}
-                        className={`h-full rounded-full ${
-                          skill.level > 80 
-                            ? 'bg-gradient-to-r from-cyan-500 to-purple-500' 
-                            : skill.level > 60 
-                              ? 'bg-gradient-to-r from-blue-500 to-cyan-500' 
-                              : 'bg-gradient-to-r from-indigo-500 to-blue-500'
-                        }`}
-                      />
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {skillCategories.map((category, index) => (
+            <SkillCard key={index} category={category} index={index} />
           ))}
         </div>
-
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.8 }}
-          className="mt-16"
-        >
-          {/* <div className="bg-black/40 backdrop-blur-sm rounded-lg p-6 border border-gray-800">
-            <h4 className="text-xl font-bold mb-4 text-white">
-              <span className="text-purple-400 font-mono mr-2">$</span>
-              Additional Capabilities
-            </h4>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {[
-                "UI/UX Design", "Database Architecture", "API Development",
-                "System Architecture", "Performance Optimization", "WebGL/Three.js",
-                "Mobile Development", "Data Visualization", "Web Security",
-                "Testing & QA", "Blockchain", "Microservices"
-              ].map((skill, index) => (
-                <motion.div
-                  key={skill}
-                  initial={{ x: -10, opacity: 0 }}
-                  whileInView={{ x: 0, opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: 1 + (index * 0.05) }}
-                  className="flex items-center gap-2"
-                >
-                  <Check size={16} className="text-green-500" />
-                  <span className="text-gray-300">{skill}</span>
-                </motion.div>
-              ))}
-            </div>
-          </div> */}
-        </motion.div>
       </div>
-    </motion.div>
+    </section>
   );
 };
 

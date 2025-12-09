@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Code, User, Cpu, Clock, Rocket, Send } from 'lucide-react';
+import { Code, User, Cpu, Rocket, Send, Home } from 'lucide-react';
 
 const NavBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,8 +10,9 @@ const NavBar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const navItems = [
-    { id: 'home', label: 'Home', icon: <Code size={20} /> },
+  // Separated Home from others to handle the specific layout: Main -> Right(Home) -> Down(Rest)
+  const homeItem = { id: 'home', label: 'Home', icon: <Home size={20} /> };
+  const menuItems = [
     { id: 'about', label: 'About', icon: <User size={20} /> },
     { id: 'skills', label: 'Skills', icon: <Cpu size={20} /> },
     // { id: 'experience', label: 'Experience', icon: <Clock size={20} /> },
@@ -23,7 +24,8 @@ const NavBar: React.FC = () => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
 
-      const sections = navItems.map(item => item.id);
+      const allItems = [homeItem, ...menuItems];
+      const sections = allItems.map(item => item.id);
       const currentSection = sections.find(section => {
         const element = document.getElementById(section);
         if (element) {
@@ -52,101 +54,131 @@ const NavBar: React.FC = () => {
     setIsOpen(false);
   };
 
+  // Animation Variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2 // Wait for home button
+      }
+    },
+    exit: {
+      opacity: 0,
+      transition: { staggerChildren: 0.05, staggerDirection: -1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: -20, scale: 0.8 },
+    show: { opacity: 1, y: 0, scale: 1 },
+    exit: { opacity: 0, y: -20, scale: 0.8 }
+  };
+
   return (
     <>
-      {/* Floating Button */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="fixed top-8 left-8 z-50"
-      >
-        <motion.button
-          onClick={() => setIsOpen(!isOpen)}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className={`relative w-16 h-16 rounded-full bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 p-[2px] ${scrolled ? 'shadow-2xl shadow-cyan-500/50' : ''
-            }`}
-        >
-          <div className="w-full h-full rounded-full bg-black/90 backdrop-blur-lg flex items-center justify-center">
-            <motion.div
-              animate={{ rotate: isOpen ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
-              className="text-2xl text-white"
-            >
-              {isOpen ? '✕' : '◉'}
-            </motion.div>
-          </div>
+      {/* 
+        Using z-50 for the wrapper ensures this entire nav sits above page content.
+        Inside, we manage stacking contexts to ensure row 1 (Home) is above row 2 (Dropdown).
+      */}
+      <div className="fixed top-8 left-8 z-50 flex flex-col items-start gap-4 pointer-events-none">
 
+        {/* Row 1: Main Toggle -> Home Button */}
+        {/* Added z-50 relative to ensure this row sits ON TOP of the row below it */}
+        <div className="flex items-center gap-4 relative z-50 pointer-events-auto">
+          {/* Main Floating Button */}
           <motion.div
-            animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="absolute inset-0 rounded-full border-2 border-cyan-400"
-          />
-          <motion.div
-            animate={{ scale: [1, 2, 1], opacity: [0.3, 0, 0.3] }}
-            transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-            className="absolute inset-0 rounded-full border border-purple-400"
-          />
-        </motion.button>
-      </motion.div>
-
-      {/* Radial Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 pointer-events-none"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
           >
-            {navItems.map((item, index) => {
-              const startAngle = -20;
-              const endAngle = 110;
-              const totalAngle = endAngle - startAngle;
-              const angleStep = totalAngle / (navItems.length - 1);
-              const angle = startAngle + index * angleStep;
-
-              const radius = 150;
-              const radian = (angle * Math.PI) / 180;
-              const x = Math.cos(radian) * radius;
-              const y = Math.sin(radian) * radius;
-
-              return (
+            <motion.button
+              onClick={() => setIsOpen(!isOpen)}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className={`relative w-16 h-16 rounded-full bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 p-[2px] ${scrolled ? 'shadow-2xl shadow-cyan-500/50' : ''
+                }`}
+            >
+              <div className="w-full h-full rounded-full bg-black/90 backdrop-blur-lg flex items-center justify-center">
                 <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, scale: 0, x: 32, y: 32 }}
-                  animate={{ opacity: 1, scale: 1, x: x + 32, y: y + 32 }}
-                  exit={{ opacity: 0, scale: 0, x: 32, y: 32 }}
-                  transition={{ delay: index * 0.1, type: 'spring' }}
-                  className="absolute top-8 left-8 pointer-events-auto"
+                  animate={{ rotate: isOpen ? 180 : 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-2xl text-white"
                 >
-                  <motion.button
-                    onClick={() => scrollToSection(item.id)}
-                    whileHover={{ scale: 1.2, rotateZ: 10 }}
-                    whileTap={{ scale: 0.9 }}
-                    className={`relative group w-12 h-12 rounded-full bg-gradient-to-r ${activeSection === item.id
-                        ? 'from-yellow-400 to-orange-500'
-                        : 'from-gray-700 to-gray-900'
-                      } p-[1px] transition-all duration-300`}
-                  >
-                    <div className="w-full h-full rounded-full bg-black/80 backdrop-blur-sm flex items-center justify-center text-white">
-                      {item.icon}
-                    </div>
-
-                    {/* Tooltip */}
-                    <div
-                      className="absolute top-1/2 left-full ml-2 transform -translate-y-1/2 invisible group-hover:visible transition-opacity bg-black/90 text-cyan-400 px-2 py-1 rounded text-xs whitespace-nowrap pointer-events-none"
-                    >
-                      {item.label}
-                    </div>
-
-                  </motion.button>
+                  {isOpen ? '✕' : '◉'}
                 </motion.div>
-              );
-            })}
+              </div>
+
+              <motion.div
+                animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute inset-0 rounded-full border-2 border-cyan-400"
+              />
+            </motion.button>
           </motion.div>
-        )}
-      </AnimatePresence>
+
+          {/* Home Button (Appears to the RIGHT) */}
+          <AnimatePresence>
+            {isOpen && (
+              <motion.button
+                initial={{ x: -50, opacity: 0, scale: 0.5 }}
+                animate={{ x: 0, opacity: 1, scale: 1 }}
+                exit={{ x: -20, opacity: 0, scale: 0.5 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                onClick={() => scrollToSection(homeItem.id)}
+                className={`group w-12 h-12 rounded-full bg-gradient-to-r ${activeSection === homeItem.id
+                  ? 'from-yellow-400 to-orange-500'
+                  : 'from-gray-700 to-gray-900'
+                  } p-[1px] shadow-lg relative`}
+              >
+                <div className="w-full h-full rounded-full bg-black/80 backdrop-blur-sm flex items-center justify-center text-white">
+                  {homeItem.icon}
+                </div>
+                {/* Tooltip: z-50 ensures it's above local content */}
+                <div className="absolute top-1/2 left-full ml-3 transform -translate-y-1/2 invisible group-hover:visible transition-opacity bg-black/90 text-cyan-400 px-2 py-1 rounded text-xs whitespace-nowrap pointer-events-none z-50 border border-cyan-500/30">
+                  {homeItem.label}
+                </div>
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Row 2: Dropdown List (Below the Home Button) */}
+        {/* relative z-40 ensures this sits BELOW Row 1 */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              exit="exit"
+              className="flex flex-col gap-3 pl-20 pointer-events-auto relative z-40"
+            >
+              {menuItems.map((item) => (
+                <motion.button
+                  key={item.id}
+                  variants={itemVariants}
+                  onClick={() => scrollToSection(item.id)}
+                  whileHover={{ scale: 1.1, x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`relative group w-12 h-12 rounded-full bg-gradient-to-r ${activeSection === item.id
+                    ? 'from-yellow-400 to-orange-500'
+                    : 'from-gray-700 to-gray-900'
+                    } p-[1px] shadow-lg`}
+                >
+                  <div className="w-full h-full rounded-full bg-black/80 backdrop-blur-sm flex items-center justify-center text-white">
+                    {item.icon}
+                  </div>
+                  <div className="absolute top-1/2 left-full ml-3 transform -translate-y-1/2 invisible group-hover:visible transition-opacity bg-black/90 text-cyan-400 px-2 py-1 rounded text-xs whitespace-nowrap pointer-events-none z-50 border border-cyan-500/30">
+                    {item.label}
+                  </div>
+                </motion.button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+      </div>
     </>
   );
 };

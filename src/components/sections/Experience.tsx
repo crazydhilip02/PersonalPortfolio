@@ -2,114 +2,12 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, Briefcase } from 'lucide-react';
 import GlitchText from '../effects/GlitchText';
+import { useContent } from '../../context/ContentContext';
 
 const Experience: React.FC = () => {
   const [activeTab, setActiveTab] = useState('work');
-  
-  const experiences = {
-    work: [
-      {
-        title: "Senior Software Engineer",
-        company: "TechCorp Industries",
-        location: "San Francisco, CA",
-        period: "2021 - Present",
-        description: [
-          "Led development of secure fintech applications with React and Node.js",
-          "Implemented OAuth 2.0 and JWT authentication systems",
-          "Reduced API response times by 40% through optimization",
-          "Mentored junior developers and conducted code reviews"
-        ]
-      },
-      {
-        title: "Full Stack Developer",
-        company: "DataSecure Solutions",
-        location: "Remote",
-        period: "2019 - 2021",
-        description: [
-          "Built secure data management applications with Vue.js and Django",
-          "Implemented encryption systems for sensitive client information",
-          "Developed automated testing pipelines reducing bugs by 35%",
-          "Collaborated with security team to conduct penetration testing"
-        ]
-      },
-      {
-        title: "Frontend Engineer",
-        company: "WebMatrix Inc.",
-        location: "New York, NY",
-        period: "2017 - 2019",
-        description: [
-          "Developed responsive web applications with React and TypeScript",
-          "Optimized frontend performance improving load times by 50%",
-          "Integrated RESTful APIs and implemented state management",
-          "Collaborated in agile team of 8 developers"
-        ]
-      }
-    ],
-    education: [
-      {
-        title: "M.S. in Computer Science",
-        company: "Stanford University",
-        location: "Stanford, CA",
-        period: "2015 - 2017",
-        description: [
-          "Specialized in Cybersecurity and Machine Learning",
-          "Thesis: 'Neural Network Approaches to Intrusion Detection Systems'",
-          "GPA: 3.9/4.0",
-          "Teaching Assistant for Advanced Algorithms"
-        ]
-      },
-      {
-        title: "B.S. in Computer Engineering",
-        company: "MIT",
-        location: "Cambridge, MA",
-        period: "2011 - 2015",
-        description: [
-          "Minor in Mathematics",
-          "Member of Cybersecurity Club",
-          "Senior Project: Secure IoT Communication Protocol",
-          "Dean's List all semesters"
-        ]
-      }
-    ],
-    certifications: [
-      {
-        title: "Certified Ethical Hacker (CEH)",
-        company: "EC-Council",
-        location: "Online",
-        period: "2022",
-        description: [
-          "Advanced penetration testing methodologies",
-          "Vulnerability assessment and exploitation techniques",
-          "Network security and cryptography",
-          "Web application security"
-        ]
-      },
-      {
-        title: "AWS Certified Solutions Architect",
-        company: "Amazon Web Services",
-        location: "Online",
-        period: "2021",
-        description: [
-          "Designing distributed systems on AWS",
-          "Security best practices for cloud architectures",
-          "Cost optimization strategies",
-          "High availability and disaster recovery planning"
-        ]
-      },
-      {
-        title: "Microsoft Certified: Azure Security Engineer",
-        company: "Microsoft",
-        location: "Online",
-        period: "2020",
-        description: [
-          "Identity and access management",
-          "Platform protection strategies",
-          "Data and application security",
-          "Security operations management"
-        ]
-      }
-    ]
-  };
+
+  const { experience: experiences } = useContent();
 
   return (
     <motion.div
@@ -149,11 +47,10 @@ const Experience: React.FC = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-3 rounded-md font-medium transition-all duration-300 ${
-                  activeTab === tab 
-                    ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500' 
-                    : 'text-gray-400 hover:text-white border border-gray-800 hover:border-gray-600'
-                }`}
+                className={`px-6 py-3 rounded-md font-medium transition-all duration-300 ${activeTab === tab
+                  ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-500'
+                  : 'text-gray-400 hover:text-white border border-gray-800 hover:border-gray-600'
+                  }`}
               >
                 <span className="capitalize">{tab}</span>
               </button>
@@ -173,14 +70,12 @@ const Experience: React.FC = () => {
                   whileInView={{ x: 0, opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.2 + (index * 0.1) }}
-                  className={`relative md:w-1/2 ${
-                    index % 2 === 0 ? 'md:ml-auto md:pl-8' : 'md:mr-auto md:pr-8'
-                  }`}
+                  className={`relative md:w-1/2 ${index % 2 === 0 ? 'md:ml-auto md:pl-8' : 'md:mr-auto md:pr-8'
+                    }`}
                 >
                   {/* Timeline dot */}
-                  <div className={`absolute top-0 ${
-                    index % 2 === 0 ? 'left-0 md:-left-4' : 'left-0 md:-left-4 md:left-auto md:-right-4'
-                  } w-8 h-8 rounded-full bg-black border-2 border-cyan-500 flex items-center justify-center`}>
+                  <div className={`absolute top-0 ${index % 2 === 0 ? 'left-0 md:-left-4' : 'left-0 md:-left-4 md:left-auto md:-right-4'
+                    } w-8 h-8 rounded-full bg-black border-2 border-cyan-500 flex items-center justify-center`}>
                     {activeTab === 'work' && <Briefcase size={16} className="text-cyan-400" />}
                     {activeTab === 'education' && <Calendar size={16} className="text-cyan-400" />}
                     {activeTab === 'certifications' && <Calendar size={16} className="text-cyan-400" />}
