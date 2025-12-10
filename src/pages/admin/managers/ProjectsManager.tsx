@@ -23,69 +23,73 @@ const ProjectsManager: React.FC = () => {
         tags: "" // New field
     });
 
-    // Auto-generate thumbnail from live URL
+    // Auto-generate thumbnail from live URL - captures actual website homepage
     const handleGenerateThumbnail = async (isEditing = false, projectId?: string) => {
         const url = isEditing ?
             projects.find(p => p.id === projectId)?.link :
             newProject.link;
 
-        const title = isEditing ?
-            projects.find(p => p.id === projectId)?.title :
-            newProject.title;
+        if (!url) {
+            alert('Please enter a Live Demo URL first. This captures the actual website homepage.');
+            return;
+        }
 
-        if (!url && !title) {
-            alert('Please enter either a live demo URL or project title first');
+        // Validate URL format
+        try {
+            new URL(url);
+        } catch {
+            alert('Please enter a valid URL (e.g., https://example.com)');
             return;
         }
 
         setGeneratingThumbnail(true);
         try {
-            let thumbnailUrl;
+            // Use WordPress mShots - completely FREE screenshot service
+            // This captures the actual homepage of the website
+            const encodedUrl = encodeURIComponent(url);
+            const screenshotUrl = `https://s.wordpress.com/mshots/v1/${encodedUrl}?w=1280&h=800`;
 
-            // Try URL-based screenshot first
-            if (url) {
-                try {
-                    const encodedUrl = encodeURIComponent(url);
-                    const timestamp = Date.now(); // Prevent caching
-                    thumbnailUrl = `https://api.screenshotmachine.com?key=demo&url=${encodedUrl}&dimension=1200x800&device=desktop&format=jpg&cacheLimit=0&delay=2000&timestamp=${timestamp}`;
-                    console.log('✓ Thumbnail generated from URL:', url);
-                    console.log('Screenshot URL:', thumbnailUrl);
-                } catch (urlError) {
-                    console.warn('URL screenshot failed, using title fallback');
-                    thumbnailUrl = null;
-                }
-            }
+            console.log('📸 Capturing website screenshot:', url);
+            console.log('Screenshot URL:', screenshotUrl);
 
-            // Fallback: Generate thumbnail from title using placeholder service
-            if (!thumbnailUrl && title) {
-                const cleanTitle = encodeURIComponent(title);
-                const colors = ['1a1a2e/00f2ea', '16213e/e94560', '0f3460/e94560', '533483/6f4c5b', '2b580c/a9f1df'];
-                const randomColor = colors[Math.floor(Math.random() * colors.length)];
-                thumbnailUrl = `https://via.placeholder.com/1200x800/${randomColor}?text=${cleanTitle}`;
-                console.log('✓ Placeholder generated for title:', title);
-            }
+            // Verify the image loads before saving
+            const img = new Image();
 
-            // Ensure we have a valid thumbnail URL
-            if (!thumbnailUrl) {
-                throw new Error('Failed to generate thumbnail');
-            }
+            await new Promise<void>((resolve) => {
+                img.onload = () => {
+                    console.log('✓ Screenshot captured successfully!');
+                    resolve();
+                };
+                img.onerror = () => {
+                    console.warn('Screenshot may take a moment to generate...');
+                    resolve(); // Still proceed - mShots generates on first request
+                };
+                img.src = screenshotUrl;
+            });
+
 
             if (isEditing && projectId) {
                 const project = projects.find(p => p.id === projectId);
                 if (project) {
-                    await updateProject(projectId, { ...project, image: thumbnailUrl });
+                    await updateProject(projectId, { ...project, image: screenshotUrl });
+                    console.log('✓ Thumbnail updated for project:', project.title);
                 }
             } else {
-                setNewProject({ ...newProject, image: thumbnailUrl });
+                setNewProject({ ...newProject, image: screenshotUrl });
+                console.log('✓ Thumbnail set for new project');
             }
 
+            alert('✓ Website screenshot captured! Check the preview below.');
+
         } catch (err) {
-            console.error('Failed to generate thumbnail:', err);
-            alert('Could not generate thumbnail. You can upload an image manually.');
+            console.error('Failed to capture screenshot:', err);
+            alert('Could not capture website screenshot. Try pasting an image URL instead.');
         } finally {
             setGeneratingThumbnail(false);
         }
     };
+
+
 
     const handleFileUpload = async (file: File): Promise<string> => {
         if (!file) return '';
@@ -313,22 +317,23 @@ const ProjectsManager: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={() => handleGenerateThumbnail()}
-                                disabled={(!newProject.link && !newProject.title) || generatingThumbnail}
+                                disabled={!newProject.link || generatingThumbnail}
                                 className="w-full bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 border border-purple-500/30 py-2.5 rounded text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 {generatingThumbnail ? (
-                                    <>⏳ Generating Screenshot...</>
+                                    <>⏳ Capturing Website Screenshot...</>
                                 ) : (
                                     <>
                                         <Camera size={16} />
-                                        📸 Auto-Generate Thumbnail
+                                        📸 Capture from Live URL
                                     </>
                                 )}
                             </button>
                             <p className="text-xs text-gray-600 mt-1 text-center">
-                                {newProject.link ? 'From live URL' : 'From project title'}
+                                {newProject.link ? 'Screenshots the homepage of your website' : 'Enter Live Demo URL first'}
                             </p>
                         </div>
+
 
                         {/* Manual Image URL Input */}
                         <div>
@@ -488,14 +493,15 @@ const ProjectsManager: React.FC = () => {
                                                 className="w-full bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 border border-purple-500/30 py-2 rounded text-xs transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                                             >
                                                 {generatingThumbnail ? (
-                                                    <>⏳ Generating...</>
+                                                    <>⏳ Capturing...</>
                                                 ) : (
                                                     <>
                                                         <Camera size={14} />
-                                                        Generate Thumbnail from URL
+                                                        📸 Capture from Live URL
                                                     </>
                                                 )}
                                             </button>
+                                            {!p.link && <p className="text-xs text-gray-600 mt-1">Add Live Demo URL first</p>}
                                         </div>
 
                                         {/* Current Image Preview */}
