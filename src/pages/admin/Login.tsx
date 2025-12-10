@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, Shield, Terminal } from 'lucide-react';
 import { useContent } from '../../context/ContentContext';
 import { sendPasswordResetEmail } from 'firebase/auth';
@@ -28,7 +28,6 @@ const Login = () => {
             setTimeout(() => navigate('/admin'), 1000);
         } catch (err: any) {
             setError(err.message || 'Authentication failed. Check credentials.');
-        } finally {
             setLoading(false);
         }
     };
@@ -55,167 +54,158 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen relative overflow-hidden bg-black flex items-center justify-center p-4">
-            {/* Animated Background */}
-            <div className="absolute inset-0">
-                <div className="absolute top-0 -left-40 w-80 h-80 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
-                <div className="absolute top-0 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" style={{ animationDelay: '2s' }} />
-                <div className="absolute -bottom-40 left-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" style={{ animationDelay: '4s' }} />
+        <div className="min-h-screen relative overflow-hidden bg-[#050508] flex items-center justify-center p-4">
+            {/* Background Grid & Glows */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
+                <div className="absolute top-0 -left-40 w-96 h-96 bg-cyan-500/20 rounded-full blur-[100px]" />
+                <div className="absolute bottom-0 -right-40 w-96 h-96 bg-purple-500/20 rounded-full blur-[100px]" />
             </div>
-
-            {/* Grid Pattern Overlay */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
 
             {/* Login Card */}
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
                 className="relative z-10 w-full max-w-md"
             >
-                {/* Glow Effect */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-2xl blur-xl opacity-30" />
+                {/* Neon Border Container */}
+                <div className="relative group">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
 
-                {/* Card */}
-                <div className="relative bg-gray-900/40 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
-                    {/* Logo/Header */}
-                    <div className="text-center mb-8">
-                        <motion.div
-                            initial={{ scale: 0.9 }}
-                            animate={{ scale: 1 }}
-                            transition={{ duration: 0.5 }}
-                            className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-2xl mb-4 shadow-lg shadow-cyan-500/50"
-                        >
-                            <Terminal size={40} className="text-white" />
-                        </motion.div>
-                        <h1 className="text-3xl font-bold text-white mb-2">
-                            Dhilip's Command Center
-                        </h1>
-                        <p className="text-gray-400 text-sm">
-                            {resetMode ? 'Reset Your Password' : 'Secure Admin Access'}
-                        </p>
-                    </div>
-
-                    {/* Notifications */}
-                    {error && (
-                        <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm"
-                        >
-                            {error}
-                        </motion.div>
-                    )}
-                    {success && (
-                        <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="mb-4 p-3 bg-green-500/10 border border-green-500/30 rounded-lg text-green-400 text-sm"
-                        >
-                            {success}
-                        </motion.div>
-                    )}
-
-                    {/* Form */}
-                    <form onSubmit={resetMode ? handlePasswordReset : handleLogin} className="space-y-6">
-                        {/* Email Input */}
-                        <motion.div
-                            initial={{ x: -20, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            transition={{ delay: 0.2 }}
-                        >
-                            <label className="block text-sm text-gray-400 mb-2">Email Address</label>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-black/50 border border-gray-700 rounded-lg pl-11 pr-4 py-3 text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 outline-none transition-all"
-                                    placeholder="admin@example.com"
-                                    required
-                                />
-                            </div>
-                        </motion.div>
-
-                        {/* Password Input */}
-                        {!resetMode && (
+                    <div className="relative bg-[#0F0F13]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl">
+                        {/* Header */}
+                        <div className="text-center mb-8">
                             <motion.div
-                                initial={{ x: -20, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ delay: 0.3 }}
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ type: "spring", duration: 0.8 }}
+                                className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-cyan-500/20 to-purple-600/20 rounded-xl mb-4 border border-cyan-500/30 shadow-lg shadow-cyan-500/10"
                             >
-                                <label className="block text-sm text-gray-400 mb-2">Password</label>
-                                <div className="relative">
-                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+                                <Terminal size={32} className="text-cyan-400" />
+                            </motion.div>
+                            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 tracking-tight">
+                                Dhilip's <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">Command Center</span>
+                            </h1>
+                            <p className="text-gray-400 text-sm">
+                                {resetMode ? 'Enter email to reset password' : 'Secure Admin Access Protocol'}
+                            </p>
+                        </div>
+
+                        {/* Status Messages */}
+                        <AnimatePresence mode="wait">
+                            {error && (
+                                <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2 text-red-400 text-sm"
+                                >
+                                    <Shield size={14} />
+                                    {error}
+                                </motion.div>
+                            )}
+                            {success && (
+                                <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg text-green-400 text-sm"
+                                >
+                                    {success}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
+                        {/* Form */}
+                        <form onSubmit={resetMode ? handlePasswordReset : handleLogin} className="space-y-5">
+                            {/* Email */}
+                            <div className="space-y-1">
+                                <label className="text-xs text-cyan-400 font-mono uppercase tracking-wider ml-1">Identity (Email)</label>
+                                <div className="relative group">
+                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-cyan-400 transition-colors" size={18} />
                                     <input
-                                        type={showPassword ? 'text' : 'password'}
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full bg-black/50 border border-gray-700 rounded-lg pl-11 pr-12 py-3 text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 outline-none transition-all"
-                                        placeholder="••••••••"
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl pl-10 pr-4 py-3.5 text-white placeholder-gray-600 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 outline-none transition-all"
+                                        placeholder="admin@dhilip.me"
                                         required
                                     />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-cyan-400 transition-colors"
-                                    >
-                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                    </button>
                                 </div>
-                            </motion.div>
-                        )}
+                            </div>
 
-                        {/* Submit Button */}
-                        <motion.button
-                            type="submit"
-                            disabled={loading}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="w-full bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-bold py-3 rounded-lg shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {loading ? 'Processing...' : resetMode ? 'Send Reset Link' : 'Access Command Center'}
-                        </motion.button>
+                            {/* Password */}
+                            {!resetMode && (
+                                <div className="space-y-1">
+                                    <label className="text-xs text-purple-400 font-mono uppercase tracking-wider ml-1">Cipher (Password)</label>
+                                    <div className="relative group">
+                                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-purple-400 transition-colors" size={18} />
+                                        <input
+                                            type={showPassword ? 'text' : 'password'}
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="w-full bg-black/40 border border-white/10 rounded-xl pl-10 pr-12 py-3.5 text-white placeholder-gray-600 focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all font-mono"
+                                            placeholder="••••••••••••"
+                                            required
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                                        >
+                                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
 
-                        {/* Forgot Password Link */}
-                        <div className="text-center">
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setResetMode(!resetMode);
-                                    setError('');
-                                    setSuccess('');
-                                }}
-                                className="text-sm text-gray-400 hover:text-cyan-400 transition-colors"
-                            >
-                                {resetMode ? '← Back to Login' : 'Forgot Password?'}
-                            </button>
-                        </div>
-                    </form>
+                            {/* Actions */}
+                            <div className="pt-2">
+                                <motion.button
+                                    type="submit"
+                                    disabled={loading}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="w-full relative group overflow-hidden bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-cyan-500/20 disabled:opacity-50 disabled:cursor-not-allowed hidden-cursor"
+                                >
+                                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-none" />
+                                    <span className="relative flex items-center justify-center gap-2">
+                                        {loading ? (
+                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        ) : resetMode ? (
+                                            'Initialize Reset Protocol'
+                                        ) : (
+                                            <>Authenticate Access <span className="font-mono">→</span></>
+                                        )}
+                                    </span>
+                                </motion.button>
+                            </div>
 
-                    {/* Footer */}
-                    <div className="mt-8 pt-6 border-t border-gray-800 text-center">
-                        <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
-                            <Shield size={14} />
-                            <span>Secured by Firebase Auth</span>
-                        </div>
+                            <div className="text-center pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setResetMode(!resetMode);
+                                        setError('');
+                                        setSuccess('');
+                                    }}
+                                    className="text-xs text-gray-500 hover:text-cyan-400 transition-colors font-mono"
+                                >
+                                    {resetMode ? '[ Return to Login ]' : '< Forgot Passcode? />'}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </motion.div>
 
-            {/* CSS for blob animation */}
-            <style>{`
-                @keyframes blob {
-                    0%, 100% { transform: translate(0, 0) scale(1); }
-                    25% { transform: translate(20px, -50px) scale(1.1); }
-                    50% { transform: translate(-20px, 20px) scale(0.9); }
-                    75% { transform: translate(50px, 50px) scale(1.05); }
-                }
-                .animate-blob {
-                    animation: blob 7s infinite;
-                }
-            `}</style>
+                {/* Footer */}
+                <div className="mt-8 text-center">
+                    <p className="text-xs text-gray-600 font-mono">
+                        SYSTEM SECURE • ENCRYPTED CONNECTION
+                    </p>
+                </div>
+            </motion.div>
         </div>
     );
 };

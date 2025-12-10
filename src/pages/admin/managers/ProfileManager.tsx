@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useContent } from '../../../context/ContentContext';
-import { storage } from '../../../config/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { Save, User, Mail, MapPin, Phone, MessageCircle } from 'lucide-react';
+import { useToast } from '../../../context/ToastContext';
+import { compressImage } from '../../../utils/imageHelpers';
+import { Save, Mail, MapPin, Phone, MessageCircle, Upload, Github, Linkedin, Twitter, FileText } from 'lucide-react';
+import PageHeader from '../../../components/admin/PageHeader';
+import AdminCard from '../../../components/admin/AdminCard';
 
 const ProfileManager: React.FC = () => {
     const { about, contact, updateAbout, updateContact } = useContent();
+    const { showToast } = useToast();
     const [aboutForm, setAboutForm] = useState(about || {});
     const [contactForm, setContactForm] = useState(contact || {});
     const [uploading, setUploading] = useState(false);
@@ -15,22 +18,17 @@ const ProfileManager: React.FC = () => {
         if (contact) setContactForm(contact);
     }, [about, contact]);
 
-    const handleFileUpload = async (file: File): Promise<string> => {
-        const storageRef = ref(storage, `profile/${Date.now()}_${file.name}`);
-        await uploadBytes(storageRef, file);
-        return await getDownloadURL(storageRef);
-    };
-
     const handleProfileImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             setUploading(true);
             try {
-                const url = await handleFileUpload(file);
-                setAboutForm({ ...aboutForm, profileImage: url });
+                const base64 = await compressImage(file);
+                setAboutForm({ ...aboutForm, profileImage: base64 });
+                showToast('Profile image updated', 'success');
             } catch (err) {
                 console.error(err);
-                alert("Upload failed");
+                showToast("Image processing failed", 'error');
             } finally {
                 setUploading(false);
             }
@@ -38,130 +36,102 @@ const ProfileManager: React.FC = () => {
     };
 
     const handleSave = async () => {
-        await updateAbout(aboutForm);
-        await updateContact(contactForm);
-        alert("Profile & Contact updated successfully!");
+        try {
+            await updateAbout(aboutForm);
+            await updateContact(contactForm);
+            showToast("✓ Profile updated successfully!", 'success');
+        } catch (e) { showToast("Update failed", 'error'); }
     };
+
+    const InputGroup = ({ icon: Icon, label, value, onChange, placeholder }: any) => (
+        <div className="relative group">
+            <label className="block text-xs text-gray-500 mb-1 ml-1 uppercase font-mono">{label}</label>
+            <div className="relative">
+                <Icon className="absolute top-3 left-3 text-gray-500 group-focus-within:text-cyan-400 transition-colors" size={16} />
+                <input
+                    value={value || ''}
+                    onChange={e => onChange(e.target.value)}
+                    placeholder={placeholder}
+                    className="w-full bg-black/40 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white focus:border-cyan-500/50 outline-none transition-all"
+                />
+            </div>
+        </div>
+    );
 
     return (
         <div className="space-y-8">
-            <div className="flex justify-between items-center bg-gray-900/50 p-6 rounded-xl border border-gray-700 backdrop-blur-sm">
-                <div>
-                    <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                        <User className="text-cyan-400" />
-                        Identity & Comms
-                    </h2>
-                    <p className="text-gray-400 text-sm">Manage personal details and contact channels</p>
-                </div>
-
-                <button
-                    onClick={handleSave}
-                    className="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2 rounded-lg font-bold flex items-center gap-2 shadow-lg hover:shadow-cyan-500/20 transition-all"
-                >
-                    <Save size={18} /> SAVE CHANGES
-                </button>
-            </div>
+            <PageHeader
+                title="Identity Protocol"
+                subtitle="Public Profile & Communication Channels"
+                action={{
+                    label: "Save Changes",
+                    icon: <Save size={18} />,
+                    onClick: handleSave
+                }}
+            />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* About Section */}
-                <div className="space-y-6">
-                    <h3 className="text-xl text-white font-mono border-b border-gray-800 pb-2">About Me</h3>
-
-                    <div className="flex gap-6 items-start">
-                        <div className="w-32 h-32 bg-gray-800 rounded-lg overflow-hidden border border-gray-600 relative group">
-                            <img src={aboutForm.profileImage} className="w-full h-full object-cover" />
-                            <label className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-xs text-white text-center p-2">
-                                {uploading ? '...' : 'Change Photo'}
-                                <input type="file" className="hidden" accept="image/*" onChange={handleProfileImage} />
-                            </label>
+                {/* Visual Identity Section */}
+                <AdminCard title="Visual Identity" className="border-cyan-500/20">
+                    <div className="flex flex-col sm:flex-row gap-8">
+                        {/* Profile Image */}
+                        <div className="flex flex-col items-center space-y-3">
+                            <div className="relative w-40 h-40 rounded-2xl overflow-hidden border-2 border-white/10 group shadow-2xl shadow-cyan-500/10">
+                                <img src={aboutForm.profileImage} className="w-full h-full object-cover" alt="Profile" />
+                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
+                                    <label className="text-xs text-white cursor-pointer flex flex-col items-center gap-2 hover:text-cyan-400 transition-colors">
+                                        <Upload size={24} />
+                                        {uploading ? 'UPLOADING...' : 'CHANGE PHOTO'}
+                                        <input type="file" className="hidden" accept="image/*" onChange={handleProfileImage} disabled={uploading} />
+                                    </label>
+                                </div>
+                            </div>
+                            <p className="text-xs text-gray-500 font-mono">REC: 500x500px JPG/PNG</p>
                         </div>
-                        <div className="flex-grow space-y-4">
-                            <div>
-                                <label className="block text-xs text-gray-500 mb-1">Bio / Manifesto</label>
+
+                        {/* Bio & Resume */}
+                        <div className="flex-1 space-y-5">
+                            <div className="space-y-1">
+                                <label className="block text-xs text-gray-500 ml-1 uppercase font-mono">Mission Statement (Bio)</label>
                                 <textarea
                                     value={aboutForm.bio || ''}
                                     onChange={e => setAboutForm({ ...aboutForm, bio: e.target.value })}
-                                    className="w-full h-24 bg-black/50 border border-gray-700 rounded px-4 py-2 text-white focus:border-cyan-500 outline-none"
+                                    className="w-full h-32 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-cyan-500/50 outline-none transition-all placeholder-gray-700"
+                                    placeholder="Brief introduction..."
                                 />
                             </div>
-                            <div>
-                                <label className="block text-xs text-gray-500 mb-1">Resume URL (PDF/Drive)</label>
-                                <input
-                                    value={aboutForm.resumeLink || ''}
-                                    onChange={e => setAboutForm({ ...aboutForm, resumeLink: e.target.value })}
-                                    className="w-full bg-black/50 border border-gray-700 rounded px-4 py-2 text-white focus:border-cyan-500 outline-none"
-                                    placeholder="https://drive.google.com/..."
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Contact Section */}
-                <div className="space-y-6">
-                    <h3 className="text-xl text-white font-mono border-b border-gray-800 pb-2">Contact Channels</h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="relative">
-                            <Mail className="absolute top-2.5 left-3 text-gray-500" size={16} />
-                            <input
-                                value={contactForm.email || ''}
-                                onChange={e => setContactForm({ ...contactForm, email: e.target.value })}
-                                placeholder="Email"
-                                className="w-full bg-black/50 border border-gray-700 rounded pl-10 pr-4 py-2 text-white focus:border-cyan-500 outline-none"
-                            />
-                        </div>
-                        <div className="relative">
-                            <Phone className="absolute top-2.5 left-3 text-gray-500" size={16} />
-                            <input
-                                value={contactForm.phone || ''}
-                                onChange={e => setContactForm({ ...contactForm, phone: e.target.value })}
-                                placeholder="Phone"
-                                className="w-full bg-black/50 border border-gray-700 rounded pl-10 pr-4 py-2 text-white focus:border-cyan-500 outline-none"
-                            />
-                        </div>
-                        <div className="relative">
-                            <MapPin className="absolute top-2.5 left-3 text-gray-500" size={16} />
-                            <input
-                                value={contactForm.location || ''}
-                                onChange={e => setContactForm({ ...contactForm, location: e.target.value })}
-                                placeholder="Location"
-                                className="w-full bg-black/50 border border-gray-700 rounded pl-10 pr-4 py-2 text-white focus:border-cyan-500 outline-none"
-                            />
-                        </div>
-                        <div className="relative">
-                            <MessageCircle className="absolute top-2.5 left-3 text-gray-500" size={16} />
-                            <input
-                                value={contactForm.whatsapp || ''}
-                                onChange={e => setContactForm({ ...contactForm, whatsapp: e.target.value })}
-                                placeholder="WhatsApp"
-                                className="w-full bg-black/50 border border-gray-700 rounded pl-10 pr-4 py-2 text-white focus:border-cyan-500 outline-none"
+                            <InputGroup
+                                icon={FileText}
+                                label="Resume / CV Link"
+                                value={aboutForm.resumeLink}
+                                onChange={(v: string) => setAboutForm({ ...aboutForm, resumeLink: v })}
+                                placeholder="https://drive.google.com/..."
                             />
                         </div>
                     </div>
+                </AdminCard>
 
-                    <h4 className="text-sm text-gray-500 font-bold mt-4">Social Profiles</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input
-                            value={contactForm.github || ''}
-                            onChange={e => setContactForm({ ...contactForm, github: e.target.value })}
-                            placeholder="GitHub URL"
-                            className="w-full bg-black/50 border border-gray-700 rounded px-4 py-2 text-white focus:border-cyan-500 outline-none"
-                        />
-                        <input
-                            value={contactForm.linkedin || ''}
-                            onChange={e => setContactForm({ ...contactForm, linkedin: e.target.value })}
-                            placeholder="LinkedIn URL"
-                            className="w-full bg-black/50 border border-gray-700 rounded px-4 py-2 text-white focus:border-cyan-500 outline-none"
-                        />
-                        <input
-                            value={contactForm.twitter || ''}
-                            onChange={e => setContactForm({ ...contactForm, twitter: e.target.value })}
-                            placeholder="Twitter / X URL"
-                            className="w-full bg-black/50 border border-gray-700 rounded px-4 py-2 text-white focus:border-cyan-500 outline-none"
-                        />
+                {/* Comms Channels Section */}
+                <AdminCard title="Signal Channels" className="border-purple-500/20" delay={0.1}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+                        <InputGroup icon={Mail} label="Email Address" value={contactForm.email} onChange={(v: string) => setContactForm({ ...contactForm, email: v })} />
+                        <InputGroup icon={Phone} label="Contact Number" value={contactForm.phone} onChange={(v: string) => setContactForm({ ...contactForm, phone: v })} />
+                        <InputGroup icon={MapPin} label="Base Location" value={contactForm.location} onChange={(v: string) => setContactForm({ ...contactForm, location: v })} />
+                        <InputGroup icon={MessageCircle} label="WhatsApp" value={contactForm.whatsapp} onChange={(v: string) => setContactForm({ ...contactForm, whatsapp: v })} />
                     </div>
-                </div>
+
+                    <div className="border-t border-white/5 pt-6">
+                        <h4 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                            <span className="w-1 h-4 bg-purple-500 rounded-full" />
+                            Network Uplinks
+                        </h4>
+                        <div className="space-y-4">
+                            <InputGroup icon={Github} label="GitHub Profile" value={contactForm.github} onChange={(v: string) => setContactForm({ ...contactForm, github: v })} placeholder="https://github.com/..." />
+                            <InputGroup icon={Linkedin} label="LinkedIn Profile" value={contactForm.linkedin} onChange={(v: string) => setContactForm({ ...contactForm, linkedin: v })} placeholder="https://linkedin.com/in/..." />
+                            <InputGroup icon={Twitter} label="Twitter / X Comms" value={contactForm.twitter} onChange={(v: string) => setContactForm({ ...contactForm, twitter: v })} placeholder="https://twitter.com/..." />
+                        </div>
+                    </div>
+                </AdminCard>
             </div>
         </div>
     );

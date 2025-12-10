@@ -81,31 +81,6 @@ const Project3DCard = ({ project }: { project: any }) => {
               </span>
             </div>
           )}
-          {/* Overlay with buttons */}
-          <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
-            {project.github && project.github !== '#' && (
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-sm transition-all hover:scale-110"
-                title="View Code"
-              >
-                <Github size={20} />
-              </a>
-            )}
-            {project.link && project.link !== '#' && (
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 bg-cyan-600/80 hover:bg-cyan-500 rounded-full text-white backdrop-blur-sm transition-all hover:scale-110 shadow-[0_0_15px_rgba(8,145,178,0.5)]"
-                title="Live Demo"
-              >
-                <ExternalLink size={20} />
-              </a>
-            )}
-          </div>
         </div>
 
         {/* Text Content */}
@@ -118,7 +93,7 @@ const Project3DCard = ({ project }: { project: any }) => {
           </p>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-2 mt-auto">
+          <div className="flex flex-wrap gap-2 mb-6">
             {project.techStack?.map((tech: string) => (
               <span
                 key={tech}
@@ -127,6 +102,31 @@ const Project3DCard = ({ project }: { project: any }) => {
                 {tech}
               </span>
             ))}
+          </div>
+
+          {/* Fixed Bottom Action Bar */}
+          <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between gap-4">
+            {project.github && project.github !== '#' ? (
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-xs font-mono text-gray-400 hover:text-white transition-colors"
+              >
+                <Github size={16} /> <span className="hidden sm:inline">SOURCE</span>
+              </a>
+            ) : <div />}
+
+            {project.link && project.link !== '#' && (
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-500/50 rounded-lg text-cyan-400 text-xs font-bold tracking-wide transition-all shadow-lg shadow-cyan-500/5"
+              >
+                LIVE SYSTEM <ExternalLink size={14} />
+              </a>
+            )}
           </div>
         </div>
       </div>
@@ -191,7 +191,7 @@ const Projects: React.FC = () => {
 
         {/* Filter (Visual only since we have few projects) */}
         <motion.div
-          className="flex justify-center gap-4 mb-12"
+          className="flex flex-wrap justify-center gap-2 md:gap-4 mb-12"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -220,6 +220,7 @@ const Projects: React.FC = () => {
               whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.15 }}
+              className="h-full"
             >
               <Project3DCard project={project} />
             </motion.div>

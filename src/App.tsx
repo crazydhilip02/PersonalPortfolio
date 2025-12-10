@@ -6,7 +6,6 @@ import NavBar from './components/NavBar';
 import Home from './components/sections/Home';
 import About from './components/sections/About';
 import Skills from './components/sections/Skills';
-import Experience from './components/sections/Experience';
 import Projects from './components/sections/Projects';
 import Contact from './components/sections/Contact';
 import ParticleBackground from './components/effects/ParticleBackground';
@@ -17,15 +16,22 @@ import { scrollToTop } from './utils/helpers';
 // Admin imports
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
+import ProjectsManager from './pages/admin/managers/ProjectsManager';
+import SkillsManager from './pages/admin/managers/SkillsManager';
+import CategoriesManager from './pages/admin/managers/CategoriesManager';
+import ProfileManager from './pages/admin/managers/ProfileManager';
 import AdminLayout from './layouts/AdminLayout';
 
 import { ContentProvider } from './context/ContentContext';
+import { ToastProvider } from './context/ToastContext';
 
 function App() {
   // Wrap everything inside ContentProvider
   return (
     <ContentProvider>
-      <AppContent />
+      <ToastProvider>
+        <AppContent />
+      </ToastProvider>
     </ContentProvider>
   );
 }
@@ -75,6 +81,10 @@ function AppContent() {
             <Route path="/admin/login" element={<Login />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashboard />} />
+              <Route path="projects" element={<ProjectsManager />} />
+              <Route path="skills" element={<SkillsManager />} />
+              <Route path="categories" element={<CategoriesManager />} />
+              <Route path="profile" element={<ProfileManager />} />
             </Route>
 
           </Routes>
