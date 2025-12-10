@@ -149,3 +149,34 @@ body {
 #form textarea::placeholder {
   color: rgba(255, 255, 255, 0.6); /* adjust placeholder color */
 }
+
+/* --- NEW STYLES FOR ABOUT SECTION --- */
+
+/* Holographic Scanning Line */
+@keyframes scanline {
+  0% { top: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.animate-scanline {
+  animation: scanline 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  box-shadow: 0 0 15px var(--primary);
+}
+
+/* Tech Grid Background */
+.bg-tech-grid {
+  background-image: 
+    linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.mask-gradient {
+  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}

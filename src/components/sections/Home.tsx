@@ -5,8 +5,10 @@ import { ArrowDown, Github, Linkedin, Code, ExternalLink, Instagram } from 'luci
 import TerminalText from '../effects/TerminalText';
 import GlitchText from '../effects/GlitchText';
 import { FaWhatsapp } from 'react-icons/fa';
+import { useContent } from '../../context/ContentContext';
 
 const Home: React.FC = () => {
+  const { hero } = useContent();
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -14,8 +16,10 @@ const Home: React.FC = () => {
     document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  if (!hero) return null;
+
   return (
-    <motion.div 
+    <motion.div
       ref={containerRef}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -29,16 +33,17 @@ const Home: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.5 }}
           className="text-5xl md:text-7xl font-bold mb-4 text-white"
         >
-          <GlitchText text="Dhilip kumar " as="span" className="text-glow" />
+          <GlitchText text={hero.title || "Full Stack Developer"} as="span" className="text-glow" />
         </motion.h1>
 
         <motion.h2
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-2xl md:text-3xl font-bold mb-8 bg-gradient-to-r from-cyan-400 via-purple-500 to-cyan-400 inline-block text-transparent bg-clip-text"
+          className="text-2xl md:text-3xl font-bold mb-8 inline-block text-transparent bg-clip-text"
+          style={{ backgroundImage: `linear-gradient(to right, var(--primary), var(--secondary), var(--primary))` }}
         >
-          Full Stack Developer
+          {hero.subtitle}
         </motion.h2>
 
         <motion.div
@@ -47,8 +52,8 @@ const Home: React.FC = () => {
           transition={{ duration: 0.8, delay: 1.1 }}
           className="mb-12 text-gray-300 text-lg max-w-2xl mx-auto"
         >
-          <TerminalText 
-            text="I craft secure, elegant code and build cutting-edge applications. Specializing in full-stack development  and system architecture."
+          <TerminalText
+            text={hero.description}
             speed={30}
           />
         </motion.div>
@@ -63,18 +68,20 @@ const Home: React.FC = () => {
             whileHover={{ scale: 1.05, y: -5 }}
             whileTap={{ scale: 0.95 }}
             onClick={scrollToProjects}
-            className="px-8 py-3 rounded-md bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-medium flex items-center gap-2 hover:shadow-lg hover:shadow-cyan-500/30 transition-all duration-300"
+            className="px-8 py-3 rounded-md text-black font-bold flex items-center gap-2 hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 bg-primary"
           >
             View Projects <Code size={18} />
           </motion.button>
-          
+
           <motion.a
-            href="#contact"
+            href={hero.resumeLink || "#"}
+            target="_blank"
+            rel="noopener noreferrer"
             whileHover={{ scale: 1.05, y: -5 }}
             whileTap={{ scale: 0.95 }}
-            className="px-8 py-3 rounded-md bg-black border border-purple-500 text-white font-medium flex items-center gap-2 hover:bg-purple-500/10 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
+            className="px-8 py-3 rounded-md bg-black border border-secondary text-white font-medium flex items-center gap-2 hover:bg-secondary/10 hover:shadow-lg hover:shadow-secondary/20 transition-all duration-300"
           >
-            Hire Me <ExternalLink size={18} />
+            My Resume <ExternalLink size={18} />
           </motion.a>
         </motion.div>
 
@@ -85,42 +92,50 @@ const Home: React.FC = () => {
           transition={{ duration: 0.8, delay: 1.7 }}
           className="mt-12 flex justify-center gap-6"
         >
-          <motion.a 
-            href="https://github.com/crazydhilip02" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            whileHover={{ y: -5, scale: 1.1 }}
-            className="text-gray-400 hover:text-white transition-colors"
-          >
-            <Github size={24} />
-          </motion.a>
-          <motion.a 
-            href="https://www.linkedin.com/in/dhilipkumar03" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            whileHover={{ y: -5, scale: 1.1 }}
-            className="text-gray-400 hover:text-white transition-colors"
-          >
-            <Linkedin size={24} />
-          </motion.a>
-          <motion.a 
-            href="https://www.instagram.com/crazy_dhilip2/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            whileHover={{ y: -5, scale: 1.1 }}
-            className="text-gray-400 hover:text-white transition-colors"
-          >
-            <Instagram size={24} />
-          </motion.a>
-          <motion.a
-            href="https://wa.me/6374106956"
-            target="_blank"
-            whileHover={{ y: -5, scale: 1.1 }}
-            rel="noopener noreferrer"
-            className="text-gray-400 hover:text-white transition-colors"
-          >
-            <FaWhatsapp size={24} />
-          </motion.a>
+          {hero.socialLinks?.github && (
+            <motion.a
+              href={hero.socialLinks.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ y: -5, scale: 1.1 }}
+              className="text-gray-400 hover:text-primary transition-colors"
+            >
+              <Github size={24} />
+            </motion.a>
+          )}
+          {hero.socialLinks?.linkedin && (
+            <motion.a
+              href={hero.socialLinks.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ y: -5, scale: 1.1 }}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <Linkedin size={24} />
+            </motion.a>
+          )}
+          {hero.socialLinks?.instagram && (
+            <motion.a
+              href={hero.socialLinks.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ y: -5, scale: 1.1 }}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <Instagram size={24} />
+            </motion.a>
+          )}
+          {hero.socialLinks?.whatsapp && (
+            <motion.a
+              href={hero.socialLinks.whatsapp}
+              target="_blank"
+              whileHover={{ y: -5, scale: 1.1 }}
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <FaWhatsapp size={24} />
+            </motion.a>
+          )}
         </motion.div>
       </div>
 
@@ -128,13 +143,13 @@ const Home: React.FC = () => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.7, y: [0, 10, 0] }}
-        transition={{ 
+        transition={{
           opacity: { delay: 2, duration: 1 },
           y: { repeat: Infinity, duration: 1.5 }
         }}
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
       >
-        <ArrowDown className="text-cyan-400" />
+        <ArrowDown className="text-primary" />
       </motion.div>
     </motion.div>
   );

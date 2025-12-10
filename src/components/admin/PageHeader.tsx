@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 interface PageHeaderProps {
     title: string;
     subtitle?: string;
-    action?: {
+    action?: React.ReactNode | {
         label: string;
         icon?: React.ReactNode;
         onClick: () => void;
@@ -30,17 +30,26 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, action }) => {
             </motion.div>
 
             {action && (
-                <motion.button
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={action.onClick}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition-all"
-                >
-                    {action.icon}
-                    {action.label}
-                </motion.button>
+                React.isValidElement(action) ? (
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                    >
+                        {action}
+                    </motion.div>
+                ) : (
+                    <motion.button
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={(action as any).onClick}
+                        className="flex items-center gap-2 px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition-all"
+                    >
+                        {(action as any).icon}
+                        {(action as any).label}
+                    </motion.button>
+                )
             )}
         </div>
     );

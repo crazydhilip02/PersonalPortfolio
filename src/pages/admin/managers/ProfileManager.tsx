@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useContent } from '../../../context/ContentContext';
 import { useToast } from '../../../context/ToastContext';
 import { compressImage } from '../../../utils/imageHelpers';
-import { Save, Mail, MapPin, Phone, MessageCircle, Upload, Github, Linkedin, Twitter, FileText } from 'lucide-react';
+import { Save, Mail, MapPin, Phone, MessageCircle, Upload, FileText, User, Type, Tags } from 'lucide-react';
 import PageHeader from '../../../components/admin/PageHeader';
 import AdminCard from '../../../components/admin/AdminCard';
 
@@ -63,11 +63,15 @@ const ProfileManager: React.FC = () => {
             <PageHeader
                 title="Identity Protocol"
                 subtitle="Public Profile & Communication Channels"
-                action={{
-                    label: "Save Changes",
-                    icon: <Save size={18} />,
-                    onClick: handleSave
-                }}
+                action={
+                    <button
+                        onClick={handleSave}
+                        className="flex items-center gap-2 px-6 py-2 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg transition-all shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)]"
+                    >
+                        <Save size={18} />
+                        SAVE CHANGES
+                    </button>
+                }
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -92,44 +96,80 @@ const ProfileManager: React.FC = () => {
                         {/* Bio & Resume */}
                         <div className="flex-1 space-y-5">
                             <div className="space-y-1">
+                                <label className="block text-xs text-gray-500 ml-1 uppercase font-mono">About Section Title</label>
+                                <div className="relative">
+                                    <Type className="absolute top-3 left-3 text-gray-500" size={16} />
+                                    <input
+                                        value={aboutForm.title || ''}
+                                        onChange={e => setAboutForm({ ...aboutForm, title: e.target.value })}
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white focus:border-cyan-500/50 outline-none"
+                                        placeholder="e.g. Architecting Secure Digital Experiences"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-1">
                                 <label className="block text-xs text-gray-500 ml-1 uppercase font-mono">Mission Statement (Bio)</label>
                                 <textarea
                                     value={aboutForm.bio || ''}
                                     onChange={e => setAboutForm({ ...aboutForm, bio: e.target.value })}
-                                    className="w-full h-32 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-cyan-500/50 outline-none transition-all placeholder-gray-700"
+                                    className="w-full h-32 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-cyan-500/50 outline-none transition-all placeholder-gray-700 resize-none"
                                     placeholder="Brief introduction..."
                                 />
                             </div>
-                            <InputGroup
-                                icon={FileText}
-                                label="Resume / CV Link"
-                                value={aboutForm.resumeLink}
-                                onChange={(v: string) => setAboutForm({ ...aboutForm, resumeLink: v })}
-                                placeholder="https://drive.google.com/..."
-                            />
+
+                            <div className="space-y-1">
+                                <label className="block text-xs text-gray-500 ml-1 uppercase font-mono">Taglines (Comma Separated)</label>
+                                <div className="relative">
+                                    <Tags className="absolute top-3 left-3 text-gray-500" size={16} />
+                                    <input
+                                        value={aboutForm.taglines ? aboutForm.taglines.join(', ') : ''}
+                                        onChange={e => setAboutForm({ ...aboutForm, taglines: e.target.value.split(',').map((t: string) => t.trim()) })}
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white focus:border-cyan-500/50 outline-none"
+                                        placeholder="Cybersecurity, Design, React..."
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </AdminCard>
 
-                {/* Comms Channels Section */}
-                <AdminCard title="Signal Channels" className="border-purple-500/20" delay={0.1}>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+                {/* Contact Information */}
+                <AdminCard title="Communication Channels">
+                    <div className="space-y-4">
                         <InputGroup icon={Mail} label="Email Address" value={contactForm.email} onChange={(v: string) => setContactForm({ ...contactForm, email: v })} />
-                        <InputGroup icon={Phone} label="Contact Number" value={contactForm.phone} onChange={(v: string) => setContactForm({ ...contactForm, phone: v })} />
-                        <InputGroup icon={MapPin} label="Base Location" value={contactForm.location} onChange={(v: string) => setContactForm({ ...contactForm, location: v })} />
-                        <InputGroup icon={MessageCircle} label="WhatsApp" value={contactForm.whatsapp} onChange={(v: string) => setContactForm({ ...contactForm, whatsapp: v })} />
+                        <InputGroup icon={Phone} label="Phone Number" value={contactForm.phone} onChange={(v: string) => setContactForm({ ...contactForm, phone: v })} />
+                        <InputGroup icon={MapPin} label="Location Base" value={contactForm.location} onChange={(v: string) => setContactForm({ ...contactForm, location: v })} />
+                        <InputGroup icon={MessageCircle} label="WhatsApp Contact" value={contactForm.whatsapp} onChange={(v: string) => setContactForm({ ...contactForm, whatsapp: v })} />
                     </div>
+                </AdminCard>
 
-                    <div className="border-t border-white/5 pt-6">
-                        <h4 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                            <span className="w-1 h-4 bg-purple-500 rounded-full" />
-                            Network Uplinks
-                        </h4>
-                        <div className="space-y-4">
-                            <InputGroup icon={Github} label="GitHub Profile" value={contactForm.github} onChange={(v: string) => setContactForm({ ...contactForm, github: v })} placeholder="https://github.com/..." />
-                            <InputGroup icon={Linkedin} label="LinkedIn Profile" value={contactForm.linkedin} onChange={(v: string) => setContactForm({ ...contactForm, linkedin: v })} placeholder="https://linkedin.com/in/..." />
-                            <InputGroup icon={Twitter} label="Twitter / X Comms" value={contactForm.twitter} onChange={(v: string) => setContactForm({ ...contactForm, twitter: v })} placeholder="https://twitter.com/..." />
-                        </div>
+                <AdminCard title="Statistics Display">
+                    <div className="grid grid-cols-2 gap-4">
+                        {aboutForm.stats && aboutForm.stats.map((stat: any, index: number) => (
+                            <div key={index} className="space-y-2 p-3 bg-white/5 rounded-lg border border-white/5">
+                                <label className="text-[10px] text-gray-500 uppercase font-mono">Label</label>
+                                <input
+                                    value={stat.label}
+                                    onChange={(e) => {
+                                        const newStats = [...aboutForm.stats];
+                                        newStats[index].label = e.target.value;
+                                        setAboutForm({ ...aboutForm, stats: newStats });
+                                    }}
+                                    className="w-full bg-black/20 border border-white/10 rounded px-2 py-1 text-sm text-white"
+                                />
+                                <label className="text-[10px] text-gray-500 uppercase font-mono">Value</label>
+                                <input
+                                    value={stat.value}
+                                    onChange={(e) => {
+                                        const newStats = [...aboutForm.stats];
+                                        newStats[index].value = e.target.value;
+                                        setAboutForm({ ...aboutForm, stats: newStats });
+                                    }}
+                                    className="w-full bg-black/20 border border-white/10 rounded px-2 py-1 text-sm text-white"
+                                />
+                            </div>
+                        ))}
                     </div>
                 </AdminCard>
             </div>

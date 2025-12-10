@@ -6,6 +6,19 @@ import { Plus, Trash2, Upload, Github, ExternalLink, Image as ImageIcon, Camera,
 import AdminCard from '../../../components/admin/AdminCard';
 import PageHeader from '../../../components/admin/PageHeader';
 
+// --- UI Helper Component (MUST be outside to prevent re-creation) ---
+const InputField = ({ label, value, onChange, placeholder }: any) => (
+    <div>
+        <label className="block text-xs text-gray-500 mb-1 uppercase font-mono">{label}</label>
+        <input
+            value={value}
+            onChange={e => onChange(e.target.value)}
+            className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-cyan-500/50 outline-none transition-all placeholder-gray-600"
+            placeholder={placeholder}
+        />
+    </div>
+);
+
 const ProjectsManager: React.FC = () => {
     const { projects, addProject, deleteProject, updateProject, categories } = useContent();
     const { showToast } = useToast();
@@ -86,15 +99,15 @@ const ProjectsManager: React.FC = () => {
     const startEditing = (project: any) => {
         setEditingId(project.id);
         setNewProject({
-            title: project.title,
-            description: project.description,
+            title: project.title || '',
+            description: project.description || '',
             longDescription: project.longDescription || '',
-            category: project.category,
-            link: project.link,
-            github: project.github,
-            image: project.image,
-            techStackInput: project.techStack.join(', '),
-            tags: project.tags?.join(', ') || ''
+            category: project.category || '',
+            link: project.link || '',
+            github: project.github || '',
+            image: project.image || '',
+            techStackInput: Array.isArray(project.techStack) ? project.techStack.join(', ') : '',
+            tags: Array.isArray(project.tags) ? project.tags.join(', ') : ''
         });
         setShowForm(true);
         // Scroll to form
@@ -148,19 +161,6 @@ const ProjectsManager: React.FC = () => {
     };
 
 
-
-    // --- UI Helpers ---
-    const InputField = ({ label, value, onChange, placeholder }: any) => (
-        <div>
-            <label className="block text-xs text-gray-500 mb-1 uppercase font-mono">{label}</label>
-            <input
-                value={value}
-                onChange={e => onChange(e.target.value)}
-                className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-cyan-500/50 outline-none transition-all placeholder-gray-600"
-                placeholder={placeholder}
-            />
-        </div>
-    );
 
     return (
         <div className="space-y-8">

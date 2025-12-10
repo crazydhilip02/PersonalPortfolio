@@ -9,7 +9,7 @@ const SkillsManager: React.FC = () => {
     const { skills, addSkillCategory, deleteSkillCategory, addSkill, deleteSkill } = useContent();
     const { showToast } = useToast();
     const [newCategory, setNewCategory] = useState('');
-    const [newSkill, setNewSkill] = useState<{ [key: string]: { name: string, level: number, link?: string } }>({});
+    const [newSkill, setNewSkill] = useState<{ [key: string]: { name: string, link?: string } }>({});
 
     const handleAddCategory = async () => {
         if (!newCategory.trim()) return;
@@ -24,12 +24,12 @@ const SkillsManager: React.FC = () => {
         const skill = newSkill[catTitle];
         if (!skill || !skill.name.trim()) return;
         try {
-            await addSkill(catTitle, skill);
-            setNewSkill({ ...newSkill, [catTitle]: { name: '', level: 50, link: '' } });
+            // Default level to 100 since we removed the slider
+            await addSkill(catTitle, { ...skill, level: 100 });
+            setNewSkill({ ...newSkill, [catTitle]: { name: '', link: '' } });
             showToast(`Added skill: ${skill.name}`, 'success');
         } catch (e) { showToast('Failed to add skill', 'error'); }
     };
-
 
     return (
         <div className="space-y-8">
@@ -102,12 +102,6 @@ const SkillsManager: React.FC = () => {
                                 >
                                     <span className="text-sm text-gray-200">{skill.name}</span>
 
-                                    {/* Level Indicator Dot */}
-                                    <div
-                                        className={`w-1.5 h-1.5 rounded-full ${skill.level > 80 ? 'bg-green-500' : skill.level > 50 ? 'bg-yellow-500' : 'bg-red-500'}`}
-                                        title={`Proficiency: ${skill.level}%`}
-                                    />
-
                                     {/* Delete Action (Hidden until hover) */}
                                     <button
                                         onClick={() => deleteSkill(cat.title, skill.name)}
@@ -127,7 +121,7 @@ const SkillsManager: React.FC = () => {
                                     value={newSkill[cat.title]?.name || ''}
                                     onChange={(e) => setNewSkill({
                                         ...newSkill,
-                                        [cat.title]: { ...(newSkill[cat.title] || { level: 80 }), name: e.target.value }
+                                        [cat.title]: { ...(newSkill[cat.title] || {}), name: e.target.value }
                                     })}
                                     onKeyPress={e => e.key === 'Enter' && handleAddSkill(cat.title)}
                                     className="flex-1 bg-transparent border-b border-gray-700 focus:border-cyan-500 text-white text-sm py-1 outline-none px-2"
@@ -142,23 +136,9 @@ const SkillsManager: React.FC = () => {
                                 )}
                             </div>
 
-                            {/* Expandable options when typing */}
+                            {/* Additional Link Option */}
                             {newSkill[cat.title]?.name && (
                                 <div className="pt-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <span className="text-xs text-gray-500 uppercase font-mono w-12">Level</span>
-                                        <input
-                                            type="range"
-                                            min="0" max="100"
-                                            value={newSkill[cat.title]?.level || 80}
-                                            onChange={(e) => setNewSkill({
-                                                ...newSkill,
-                                                [cat.title]: { ...newSkill[cat.title], level: parseInt(e.target.value) }
-                                            })}
-                                            className="flex-1 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-cyan-500"
-                                        />
-                                        <span className="text-xs text-cyan-400 w-8">{newSkill[cat.title]?.level}%</span>
-                                    </div>
                                     <div className="flex items-center gap-3">
                                         <Award size={14} className="text-gray-600" />
                                         <input

@@ -2,13 +2,18 @@ import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard,
-    Rocket,
     Cpu,
-    Tags,
+    User,
+    Terminal,
+    Palette,
     LogOut,
     Settings,
     Menu,
-    X
+    X,
+    Rocket,
+    Tags,
+    Calendar,
+    Briefcase
 } from 'lucide-react';
 import { useContent } from '../context/ContentContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -31,9 +36,15 @@ const AdminMobileNav = () => {
 
     const navItems = [
         { path: '/admin', icon: <LayoutDashboard size={20} />, label: 'Dashboard', end: true },
+        { path: '/admin/hero', icon: <Terminal size={20} />, label: 'Hero Protocol' },
+        { path: '/admin/experience', icon: <Cpu size={20} />, label: 'Journey' },
         { path: '/admin/projects', icon: <Rocket size={20} />, label: 'Projects' },
         { path: '/admin/skills', icon: <Cpu size={20} />, label: 'Skills' },
         { path: '/admin/categories', icon: <Tags size={20} />, label: 'Categories' },
+        { path: '/admin/services', icon: <Briefcase size={20} />, label: 'Services' },
+        { path: '/admin/profile', icon: <User size={20} />, label: 'Profile' },
+        { path: '/admin/appointments-manager', icon: <Calendar size={20} />, label: 'Appointments' },
+        { path: '/admin/theme', icon: <Palette size={20} />, label: 'Theme Engine' },
     ];
 
     return (
@@ -41,10 +52,10 @@ const AdminMobileNav = () => {
             {/* Mobile Top Bar */}
             <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-black/80 backdrop-blur-xl border-b border-white/10 z-50 flex items-center justify-between px-4">
                 <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center">
-                        <Settings className="text-white" size={16} />
+                    <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                        <Terminal className="text-cyan-400" size={16} />
                     </div>
-                    <span className="font-bold text-white tracking-wide">COMMAND CENTER</span>
+                    <span className="font-bold text-white tracking-wide text-sm">DHILIP'S CMD CENTER</span>
                 </div>
 
                 <button
@@ -97,10 +108,10 @@ const AdminMobileNav = () => {
                                 ))}
                             </nav>
 
-                            <div className="p-4 border-t border-white/10 bg-black/20">
+                            <div className="p-4 border-t border-white/10">
                                 <button
                                     onClick={handleLogout}
-                                    className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all border border-transparent hover:border-red-500/20"
+                                    className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors"
                                 >
                                     <LogOut size={20} />
                                     <span className="font-medium">Logout</span>

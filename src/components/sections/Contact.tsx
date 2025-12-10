@@ -70,14 +70,14 @@ const Contact: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="mb-16 text-center"
         >
-          <h2 className="text-sm uppercase tracking-wider text-purple-400 font-mono mb-2">
+          <h2 className="text-sm uppercase tracking-wider font-mono mb-2" style={{ color: `var(--secondary)` }}>
             Get In Touch
           </h2>
           <h3 className="text-4xl font-bold mb-4">
             <GlitchText text="Contact" className="mr-2 text-white" />
-            <span className="text-cyan-400">Portal</span>
+            <span style={{ color: `var(--primary)` }}>Portal</span>
           </h3>
-          <div className="h-1 w-20 bg-gradient-to-r from-cyan-500 to-purple-500 mx-auto"></div>
+          <div className="h-1 w-20 mx-auto" style={{ background: `linear-gradient(to right, var(--primary), var(--secondary))` }}></div>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
@@ -105,7 +105,7 @@ const Contact: React.FC = () => {
                   <a href={contact.mapLink} target="_blank" rel="noopener noreferrer">
                     <div className="flex items-start gap-4">
                       <div className="p-3 bg-black/50 rounded-lg border border-gray-800">
-                        <MapPin className="text-cyan-400" size={20} />
+                        <MapPin className="text-primary" size={20} />
                       </div>
                       <div>
                         <h5 className="text-gray-200 font-bold">Location</h5>
@@ -118,7 +118,7 @@ const Contact: React.FC = () => {
                   <a href={`mailto:${contact.email}`} target="_blank" rel="noopener noreferrer">
                     <div className="flex items-start gap-4">
                       <div className="p-3 bg-black/50 rounded-lg border border-gray-800">
-                        <Mail className="text-cyan-400" size={20} />
+                        <Mail className="text-primary" size={20} />
                       </div>
                       <div >
                         <h5 className="text-gray-200 font-bold">Email</h5>
@@ -131,7 +131,7 @@ const Contact: React.FC = () => {
                   <a href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener noreferrer">
                     <div className="flex items-start gap-4">
                       <div className="p-3 bg-black/50 rounded-lg border border-gray-800">
-                        <Smartphone className="text-cyan-400" size={20} />
+                        <Smartphone className="text-primary" size={20} />
                       </div>
                       <div>
                         <h5 className="text-gray-200 font-bold">WhatsApp</h5>
@@ -152,9 +152,9 @@ const Contact: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            <div className="bg-gray-900/30 backdrop-blur-sm p-8 rounded-lg border border-gray-800">
+            <div className="bg-gray-900/30 backdrop-blur-sm p-8 rounded-lg border border-gray-800 hover:border-primary/50 transition-colors">
               <h4 className="text-xl font-bold mb-6 text-white">
-                <span className="text-purple-400 font-mono mr-2">$</span>
+                <span className="text-secondary font-mono mr-2">$</span>
                 Send Message
               </h4>
 
@@ -175,7 +175,7 @@ const Contact: React.FC = () => {
 
                   <div>
                     <label htmlFor="name" className="text-gray-300 mb-1 block text-sm">
-                      <span className="text-cyan-400 mr-1">*</span>Name
+                      <span className="text-primary mr-1">*</span>Name
                     </label>
                     <input
                       type="text"
@@ -184,14 +184,14 @@ const Contact: React.FC = () => {
                       value={formState.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-black/40 border border-gray-800 rounded-md text-white"
+                      className="w-full px-4 py-3 bg-black/40 border border-gray-800 rounded-md text-white focus:border-primary focus:outline-none transition-colors"
                       placeholder="John Doe"
                     />
                   </div>
 
                   <div>
                     <label htmlFor="email" className="text-gray-300 mb-1 block text-sm">
-                      <span className="text-cyan-400 mr-1">*</span>Email
+                      <span className="text-primary mr-1">*</span>Email
                     </label>
                     <input
                       type="email"
@@ -200,7 +200,7 @@ const Contact: React.FC = () => {
                       value={formState.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-black/40 border border-gray-800 rounded-md text-white"
+                      className="w-full px-4 py-3 bg-black/40 border border-gray-800 rounded-md text-white focus:border-primary focus:outline-none transition-colors"
                       placeholder="your@email.com"
                     />
                   </div>
@@ -215,14 +215,14 @@ const Contact: React.FC = () => {
                       name="subject"
                       value={formState.subject}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-black/40 border border-gray-800 rounded-md text-white"
+                      className="w-full px-4 py-3 bg-black/40 border border-gray-800 rounded-md text-white focus:border-primary focus:outline-none transition-colors"
                       placeholder="Project Inquiry"
                     />
                   </div>
 
                   <div>
                     <label htmlFor="message" className="text-gray-300 mb-1 block text-sm">
-                      <span className="text-cyan-400 mr-1">*</span>Message
+                      <span className="text-primary mr-1">*</span>Message
                     </label>
                     <textarea
                       id="message"
@@ -231,7 +231,7 @@ const Contact: React.FC = () => {
                       onChange={handleChange}
                       required
                       rows={5}
-                      className="w-full px-4 py-3 bg-black/40 border border-gray-800 rounded-md text-white resize-none"
+                      className="w-full px-4 py-3 bg-black/40 border border-gray-800 rounded-md text-white resize-none focus:border-primary focus:outline-none transition-colors"
                       placeholder="Hello, I'd like to discuss a project..."
                     />
                   </div>
@@ -241,8 +241,9 @@ const Contact: React.FC = () => {
                     whileTap={{ scale: 0.97 }}
                     type="submit"
                     disabled={isSubmitting}
-                    className={`w-full py-3 px-6 rounded-md bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium flex items-center justify-center gap-2 transition-all duration-300 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                    className={`w-full py-3 px-6 rounded-md text-black font-bold font-mono flex items-center justify-center gap-2 transition-all duration-300 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
                       }`}
+                    style={{ background: `linear-gradient(to right, var(--primary), var(--secondary))` }}
                   >
                     {isSubmitting ? 'Sending...' : <>
                       <span>Send Message</span>
