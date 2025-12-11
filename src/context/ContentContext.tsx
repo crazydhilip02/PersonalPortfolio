@@ -72,6 +72,7 @@ interface ContentContextType {
     addService: (data: any) => Promise<void>;
     updateService: (id: string, updates: any) => Promise<void>;
     deleteService: (id: string) => Promise<void>;
+    reorderServices: (newOrder: any[]) => Promise<void>;
 
     // Appointments
     appointments: any[];
@@ -326,6 +327,17 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
         await deleteDoc(doc(db, 'services', id));
     };
 
+    const reorderServices = async (newOrder: any[]) => {
+        setServices(newOrder);
+        try {
+            await Promise.all(newOrder.map((service, index) =>
+                updateDoc(doc(db, 'services', service.id), { order: index })
+            ));
+        } catch (error) {
+            console.error("Failed to reorder services", error);
+        }
+    };
+
     const updateSkills = async (data: any[]) => {
         await setDoc(doc(db, 'content', 'skills'), { categories: data }, { merge: true });
     };
@@ -397,6 +409,7 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
             addService,
             updateService,
             deleteService,
+            reorderServices,
             appointments,
             addAppointment,
             deleteAppointment,

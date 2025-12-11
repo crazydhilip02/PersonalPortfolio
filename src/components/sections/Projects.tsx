@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-motion';
-import { Github, ExternalLink, Code } from 'lucide-react';
+import { Github, ExternalLink } from 'lucide-react';
 import GlitchText from '../effects/GlitchText';
 import { useContent } from '../../context/ContentContext';
 
@@ -51,7 +51,7 @@ const Project3DCard = ({ project }: { project: any }) => {
         transformStyle: "preserve-3d",
         transform,
       }}
-      className="relative h-full rounded-xl bg-gray-900/40 backdrop-blur-md border border-white/10 group hover:border-primary/50 transition-colors duration-300 flex flex-col"
+      className="relative h-full rounded-xl bg-gray-900/25 backdrop-blur-md border border-white/10 group hover:border-primary/40 transition-all duration-300 flex flex-col"
     >
       <div
         style={{
@@ -187,24 +187,6 @@ const Projects: React.FC = () => {
             Deployed <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"><GlitchText text="Solutions" /></span>
           </h3>
           <div className="h-1 w-24 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full shadow-[0_0_15px_var(--primary)]" />
-        </motion.div>
-
-        {/* Stats Section - Always Visible */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-          className="grid grid-cols-2 gap-6 max-w-2xl mx-auto mb-16"
-        >
-          <div className="bg-gray-900/50 backdrop-blur-sm border border-primary/20 rounded-xl p-6 text-center hover:border-primary/50 transition-all">
-            <div className="text-4xl md:text-5xl font-bold text-primary mb-2">{projects.length}+</div>
-            <div className="text-gray-400 font-mono text-sm">Projects Completed</div>
-          </div>
-          <div className="bg-gray-900/50 backdrop-blur-sm border border-primary/20 rounded-xl p-6 text-center hover:border-primary/50 transition-all">
-            <div className="text-4xl md:text-5xl font-bold text-primary mb-2">50+</div>
-            <div className="text-gray-400 font-mono text-sm">Happy Clients</div>
-          </div>
         </motion.div>
 
         {/* Filter */}

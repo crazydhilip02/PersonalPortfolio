@@ -29,33 +29,59 @@ const SkillPill = ({ name }: { name: string }) => {
 
   return (
     <motion.div
-      whileHover={{ y: -4, scale: 1.05 }}
+      whileHover={{ y: -6, scale: 1.08 }}
       whileTap={{ scale: 0.95 }}
-      className="group relative flex items-center gap-3 px-5 py-3 bg-gray-900/40 backdrop-blur-md border border-white/10 rounded-xl hover:border-white/20 transition-all cursor-default overflow-hidden"
+      className="group relative flex items-center gap-4 px-6 py-4 bg-gradient-to-br from-gray-900/20 via-gray-800/15 to-gray-900/25 backdrop-blur-xl border border-white/10 rounded-2xl hover:border-white/30 transition-all cursor-pointer overflow-hidden shadow-lg hover:shadow-2xl"
     >
-      {/* Dynamic Hover Glow */}
+      {/* Animated Gradient Border on Hover */}
       <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"
+        className="absolute -inset-[1px] rounded-2xl opacity-0 group-hover:opacity-100 blur transition-opacity duration-500 pointer-events-none"
+        style={{ background: `linear-gradient(135deg, ${color}, transparent, ${color})` }}
+      />
+
+      {/* Dynamic Glow Effect */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-500 pointer-events-none blur-2xl"
         style={{ background: `radial-gradient(circle at center, ${color}, transparent 70%)` }}
       />
 
-      {/* Icon */}
+      {/* Animated Background Shine */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 pointer-events-none" />
+
+      {/* Icon Container with 3D Effect */}
       <div
-        className="relative z-10 p-2 rounded-lg bg-white/5 group-hover:bg-white/10 transition-colors"
-        style={{ color: color }}
+        className="relative z-10 p-3 rounded-xl bg-gradient-to-br from-white/10 to-white/5 group-hover:from-white/20 group-hover:to-white/10 transition-all duration-300 shadow-lg group-hover:shadow-xl transform group-hover:rotate-12 group-hover:scale-110"
+        style={{
+          color: color,
+          boxShadow: `0 0 20px ${color}20, inset 0 0 20px ${color}10`
+        }}
       >
-        <Icon size={20} />
+        <Icon size={24} strokeWidth={2.5} />
       </div>
 
-      {/* Text */}
-      <span className="relative z-10 text-sm font-bold text-gray-300 group-hover:text-white transition-colors">
+      {/* Text with Gradient */}
+      <span
+        className="relative z-10 text-base font-bold text-gray-200 group-hover:text-white transition-colors tracking-wide"
+        style={{
+          textShadow: `0 0 20px ${color}40`
+        }}
+      >
         {name}
       </span>
 
-      {/* Bottom Border Highlight */}
+      {/* Animated Bottom Border */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-[2px] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
-        style={{ backgroundColor: color }}
+        className="absolute bottom-0 left-0 right-0 h-1 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-full"
+        style={{
+          backgroundColor: color,
+          boxShadow: `0 0 10px ${color}`
+        }}
+      />
+
+      {/* Corner Glow */}
+      <div
+        className="absolute top-0 right-0 w-16 h-16 opacity-0 group-hover:opacity-50 transition-opacity duration-500 blur-2xl"
+        style={{ background: `radial-gradient(circle at top right, ${color}, transparent)` }}
       />
     </motion.div>
   );

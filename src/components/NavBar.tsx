@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Code, User, Cpu, Rocket, Send, Home, Briefcase, GraduationCap } from 'lucide-react';
+import { User, Cpu, Rocket, Send, Home, Briefcase } from 'lucide-react';
 
 const NavBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,10 +14,9 @@ const NavBar: React.FC = () => {
   const homeItem = { id: 'home', label: 'Home', icon: <Home size={20} /> };
   const menuItems = [
     { id: 'about', label: 'About', icon: <User size={20} /> },
-    { id: 'skills', label: 'Skills', icon: <Cpu size={20} /> },
     { id: 'services', label: 'Services', icon: <Briefcase size={20} /> },
-    { id: 'experience', label: 'Education', icon: <GraduationCap size={20} /> },
     { id: 'projects', label: 'Projects', icon: <Rocket size={20} /> },
+    { id: 'skills', label: 'Skills', icon: <Cpu size={20} /> },
     { id: 'contact', label: 'Contact', icon: <Send size={20} /> },
   ];
 
@@ -100,7 +99,7 @@ const NavBar: React.FC = () => {
               className={`relative w-16 h-16 rounded-full p-[2px] ${scrolled ? 'shadow-2xl shadow-primary/50' : ''
                 }`}
             >
-              <div className="w-full h-full rounded-full bg-black/90 backdrop-blur-lg flex items-center justify-center">
+              <div className="w-full h-full rounded-full bg-gray-900/25 backdrop-blur-xl border border-white/10 flex items-center justify-center">
                 <motion.div
                   animate={{ rotate: isOpen ? 180 : 0 }}
                   transition={{ duration: 0.3 }}
@@ -132,11 +131,11 @@ const NavBar: React.FC = () => {
                   : 'bg-gradient-to-r from-gray-700 to-gray-900'
                   }`}
               >
-                <div className="w-full h-full rounded-full bg-black/80 backdrop-blur-sm flex items-center justify-center text-white">
+                <div className="w-full h-full rounded-full bg-gray-900/25 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white">
                   {homeItem.icon}
                 </div>
                 {/* Tooltip: z-50 ensures it's above local content */}
-                <div className="absolute top-1/2 left-full ml-3 transform -translate-y-1/2 invisible group-hover:visible transition-opacity bg-black/90 text-primary px-2 py-1 rounded text-xs whitespace-nowrap pointer-events-none z-50 border border-primary/30">
+                <div className="absolute top-1/2 left-full ml-3 transform -translate-y-1/2 invisible group-hover:visible transition-opacity bg-gray-900/90 backdrop-blur-md text-primary px-2 py-1 rounded text-xs whitespace-nowrap pointer-events-none z-50 border border-primary/30">
                   {homeItem.label}
                 </div>
               </motion.button>
@@ -167,10 +166,10 @@ const NavBar: React.FC = () => {
                     : 'bg-gradient-to-r from-gray-700 to-gray-900'
                     }`}
                 >
-                  <div className="w-full h-full rounded-full bg-black/80 backdrop-blur-sm flex items-center justify-center text-white">
+                  <div className="w-full h-full rounded-full bg-gray-900/25 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white">
                     {item.icon}
                   </div>
-                  <div className="absolute top-1/2 left-full ml-3 transform -translate-y-1/2 invisible group-hover:visible transition-opacity bg-black/90 text-primary px-2 py-1 rounded text-xs whitespace-nowrap pointer-events-none z-50 border border-primary/30">
+                  <div className="absolute top-1/2 left-full ml-3 transform -translate-y-1/2 invisible group-hover:visible transition-opacity bg-gray-900/90 backdrop-blur-md text-primary px-2 py-1 rounded text-xs whitespace-nowrap pointer-events-none z-50 border border-primary/30">
                     {item.label}
                   </div>
                 </motion.button>

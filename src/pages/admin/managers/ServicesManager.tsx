@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useContent } from '../../../context/ContentContext';
 import { useToast } from '../../../context/ToastContext';
-import { Plus, Trash2, Edit2, Save, X, Briefcase } from 'lucide-react';
+import { Plus, Trash2, Edit2, Save, X, Briefcase, GripVertical } from 'lucide-react';
 import AdminCard from '../../../components/admin/AdminCard';
 import PageHeader from '../../../components/admin/PageHeader';
+import { Reorder } from 'framer-motion';
 
 // UI Helper (outside component to prevent re-creation)
 const InputField = ({ label, value, onChange, placeholder }: any) => (
@@ -19,7 +20,7 @@ const InputField = ({ label, value, onChange, placeholder }: any) => (
 );
 
 const ServicesManager: React.FC = () => {
-    const { services, addService, updateService, deleteService } = useContent();
+    const { services, addService, updateService, deleteService, reorderServices } = useContent();
     const { showToast } = useToast();
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -80,7 +81,7 @@ const ServicesManager: React.FC = () => {
         <div className="space-y-8">
             <PageHeader
                 title="Services Command"
-                subtitle="Manage Service Offerings"
+                subtitle="Drag to Prioritize Order"
                 action={{
                     label: showForm ? 'Cancel' : 'Add Service',
                     icon: showForm ? <X size={18} /> : <Plus size={18} />,
@@ -148,41 +149,46 @@ const ServicesManager: React.FC = () => {
             )}
 
             {/* Services List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {services.map(service => (
-                    <AdminCard key={service.id} title="" className="relative">
-                        <div className="flex items-start gap-4">
-                            <div className="w-12 h-12 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-500">
-                                <Briefcase size={24} />
-                            </div>
-                            <div className="flex-1">
-                                <h3 className="text-lg font-bold text-white mb-2">{service.title}</h3>
-                                <p className="text-gray-400 text-sm mb-4">{service.description}</p>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => startEditing(service)}
-                                        className="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded text-blue-500 text-xs hover:bg-blue-600/30 transition-all flex items-center gap-1"
-                                    >
-                                        <Edit2 size={12} /> Edit
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(service.id)}
-                                        className="px-3 py-1 bg-red-600/20 border border-red-500/30 rounded text-red-500 text-xs hover:bg-red-600/30 transition-all flex items-center gap-1"
-                                    >
-                                        <Trash2 size={12} /> Delete
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </AdminCard>
-                ))}
-            </div>
-
-            {services.length === 0 && !showForm && (
+            {services.length === 0 ? (
                 <div className="text-center text-gray-500 py-12">
                     <Briefcase className="mx-auto mb-4 opacity-50" size={48} />
                     <p>No services yet. Click "Add Service" to create one.</p>
                 </div>
+            ) : (
+                <Reorder.Group axis="y" values={services} onReorder={reorderServices} className="space-y-4">
+                    {services.map(service => (
+                        <Reorder.Item key={service.id} value={service}>
+                            <AdminCard className="group hover:border-cyan-500/30 transition-all cursor-move">
+                                <div className="flex items-start gap-4">
+                                    <div className="text-gray-600 group-hover:text-cyan-500 transition-colors mt-1">
+                                        <GripVertical size={20} />
+                                    </div>
+                                    <div className="w-12 h-12 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-500 flex-shrink-0">
+                                        <Briefcase size={24} />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="text-lg font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors">{service.title}</h3>
+                                        <p className="text-gray-400 text-sm mb-4">{service.description}</p>
+                                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button
+                                                onClick={() => startEditing(service)}
+                                                className="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded text-blue-500 text-xs hover:bg-blue-600/30 transition-all flex items-center gap-1"
+                                            >
+                                                <Edit2 size={12} /> Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(service.id)}
+                                                className="px-3 py-1 bg-red-600/20 border border-red-500/30 rounded text-red-500 text-xs hover:bg-red-600/30 transition-all flex items-center gap-1"
+                                            >
+                                                <Trash2 size={12} /> Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </AdminCard>
+                        </Reorder.Item>
+                    ))}
+                </Reorder.Group>
             )}
         </div>
     );

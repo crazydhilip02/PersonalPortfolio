@@ -88,7 +88,7 @@ const Contact: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <div className="bg-gray-900/30 backdrop-blur-sm p-8 rounded-lg border border-gray-800">
+            <div className="bg-gray-900/25 backdrop-blur-md p-8 rounded-lg border border-white/10 hover:border-primary/30 transition-all">
               <h4 className="text-xl font-bold mb-6 text-white">
                 <span className="text-purple-400 font-mono mr-2">$</span>
                 Connect With Me
@@ -104,7 +104,7 @@ const Contact: React.FC = () => {
                 <div>
                   <a href={contact.mapLink} target="_blank" rel="noopener noreferrer">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 bg-black/50 rounded-lg border border-gray-800">
+                      <div className="p-3 bg-black/30 backdrop-blur-sm rounded-lg border border-white/10">
                         <MapPin className="text-primary" size={20} />
                       </div>
                       <div>
@@ -152,7 +152,7 @@ const Contact: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            <div className="bg-gray-900/30 backdrop-blur-sm p-8 rounded-lg border border-gray-800 hover:border-primary/50 transition-colors">
+            <div className="bg-gray-900/25 backdrop-blur-md p-8 rounded-lg border border-white/10 hover:border-primary/40 transition-all">
               <h4 className="text-xl font-bold mb-6 text-white">
                 <span className="text-secondary font-mono mr-2">$</span>
                 Send Message
@@ -184,7 +184,7 @@ const Contact: React.FC = () => {
                       value={formState.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-black/40 border border-gray-800 rounded-md text-white focus:border-primary focus:outline-none transition-colors"
+                      className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/10 rounded-md text-white focus:border-primary focus:outline-none transition-colors"
                       placeholder="John Doe"
                     />
                   </div>

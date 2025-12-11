@@ -23,7 +23,7 @@ const Counter = ({ value, label }: { value: string, label: string }) => {
   }, [numericValue, count, rounded]);
 
   return (
-    <div className="bg-gray-900/40 backdrop-blur-sm border border-primary/20 p-6 rounded-xl relative overflow-hidden transition-all duration-300">
+    <div className="bg-gray-900/25 backdrop-blur-md border border-white/10 hover:border-primary/30 p-6 rounded-xl relative overflow-hidden transition-all duration-300">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
       <div className="absolute top-0 right-0 p-2 opacity-100">
         <Cpu size={16} className="text-primary" />
@@ -41,6 +41,7 @@ const Counter = ({ value, label }: { value: string, label: string }) => {
 
 const About: React.FC = () => {
   const { about, experience } = useContent();
+  const [showTimeline, setShowTimeline] = useState(false);
 
   const stats = about?.stats || [
     { value: '20+', label: 'Projects Deployed' },
@@ -162,6 +163,20 @@ const About: React.FC = () => {
                   </span>
                 </a>
 
+                {/* Timeline Toggle Button */}
+                {(experience?.work?.length > 0 || experience?.education?.length > 0) && (
+                  <button
+                    onClick={() => setShowTimeline(!showTimeline)}
+                    className="group relative px-8 py-4 bg-gray-900/25 backdrop-blur-md border border-white/10 hover:border-secondary/40 text-white font-bold font-mono overflow-hidden rounded-lg transition-all"
+                  >
+                    <div className="absolute inset-0 w-full h-full bg-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="relative flex items-center gap-2">
+                      {showTimeline ? <GraduationCap size={18} /> : <Briefcase size={18} />}
+                      {showTimeline ? 'HIDE_CHRONICLES' : 'VIEW_CHRONICLES'}
+                    </span>
+                  </button>
+                )}
+
                 {/* Social/Tech Tags */}
                 <div className="flex gap-3">
                   {taglines.map((tag: string) => (
@@ -177,9 +192,15 @@ const About: React.FC = () => {
         </div>
       </section>
 
-      {/* SECTION 2: TIMELINE (Preserved functionality, upgraded visuals) */}
-      {(experience?.work?.length > 0 || experience?.education?.length > 0) && (
-        <section className="py-32 relative border-t border-cyan-900/20 bg-gradient-to-b from-transparent to-cyan-900/5">
+      {/* SECTION 2: TIMELINE (Hideable/Showable) */}
+      {showTimeline && (experience?.work?.length > 0 || experience?.education?.length > 0) && (
+        <motion.section
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.5 }}
+          className="py-32 relative border-t border-cyan-900/20 bg-gradient-to-b from-transparent to-cyan-900/5"
+        >
           <div className="container mx-auto px-4 z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -211,7 +232,7 @@ const About: React.FC = () => {
 
                       <motion.div
                         whileHover={{ x: 10 }}
-                        className="p-6 bg-gray-900/30 border border-white/5 hover:border-primary/30 rounded-r-xl transition-all"
+                        className="p-6 bg-gray-900/25 backdrop-blur-sm border border-white/10 hover:border-primary/40 rounded-r-xl transition-all"
                       >
                         <span className="inline-block px-2 py-1 mb-3 text-xs font-mono text-primary bg-primary/10 rounded">{job.period}</span>
                         <h4 className="text-xl font-bold text-white group-hover:text-primary transition-colors">{job.role}</h4>
@@ -240,7 +261,7 @@ const About: React.FC = () => {
 
                       <motion.div
                         whileHover={{ x: 10 }}
-                        className="p-6 bg-gray-900/30 border border-white/5 hover:border-secondary/30 rounded-r-xl transition-all"
+                        className="p-6 bg-gray-900/25 backdrop-blur-sm border border-white/10 hover:border-secondary/40 rounded-r-xl transition-all"
                       >
                         <div className="flex items-center gap-2 mb-3 text-xs font-mono text-secondary">
                           <Calendar size={12} />
@@ -259,7 +280,7 @@ const About: React.FC = () => {
 
             </div>
           </div>
-        </section>
+        </motion.section>
       )}
     </div>
   );
